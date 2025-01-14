@@ -35,9 +35,7 @@ services:
       context: ./ 
       dockerfile: spark/Dockerfile
     container_name: spark-master
-    volumes:
-    - ./spark/output:/opt/bitnami/spark/output
-    command: bash -c "bin/spark-class org.apache.spark.deploy.master.Master & spark-submit --total-executor-cores 4 --executor-memory 2g --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.4 spark_stream.py"
+    command: bash -c "bin/spark-class org.apache.spark.deploy.master.Master & spark-submit --total-executor-cores 4 --executor-memory 2g --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.4,org.apache.kafka:kafka-clients:3.2.3 spark_stream.py"
     ports:
       - "9090:8080"
       - "7077:7077"
