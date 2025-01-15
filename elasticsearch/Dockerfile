@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y python3 python3-pip \
     && chmod 775 /opt/bitnami/elasticsearch
 
 # Copy custom scripts
-COPY create_index_elastic.py /usr/share/elasticsearch/scripts/create_index_elastic.py
-COPY custom_startup.sh /usr/share/elasticsearch/scripts/custom_startup.sh
+COPY ./elasticsearch/create_index_elastic.py /usr/share/elasticsearch/scripts/create_index_elastic.py
+COPY ./elasticsearch/custom_startup.sh /usr/share/elasticsearch/scripts/custom_startup.sh
 
 # Make the startup script executable
 RUN chmod +x /usr/share/elasticsearch/scripts/custom_startup.sh

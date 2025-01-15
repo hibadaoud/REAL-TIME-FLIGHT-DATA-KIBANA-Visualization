@@ -34,14 +34,21 @@ mapping = {
     }
 }
 
-
 # Check if the Elasticsearch index exists
-if es.indices.exists(index=index_name):
-    # Delete the index
-    es.indices.delete(index=index_name)
-    print(f"Index '{index_name}' has been deleted.")
+if not es.indices.exists(index=index_name):
+    # Create the index with the specified mapping
+    es.indices.create(index=index_name, body=mapping)
+    print(f"Index '{index_name}' has been created.")
 else:
-    print(f"Index '{index_name}' does not exist.")
+    print(f"Index '{index_name}' already exists. No action taken.")
 
-# Create the Elasticsearch index with the specified mapping of my data
-es.indices.create(index=index_name,  mappings=mapping['mappings'])
+# # Check if the Elasticsearch index exists
+# if es.indices.exists(index=index_name):
+#     # Delete the index
+#     es.indices.delete(index=index_name)
+#     print(f"Index '{index_name}' has been deleted.")
+# else:
+#     print(f"Index '{index_name}' does not exist.")
+
+# # Create the Elasticsearch index with the specified mapping of my data
+# es.indices.create(index=index_name,  mappings=mapping['mappings'])

@@ -35,12 +35,12 @@ RUN pip install spark pyspark
 #     curl -L -o /opt/bitnami/spark/jars/snappy-java-1.1.8.4.jar https://repo1.maven.org/maven2/org/xerial/snappy/snappy-java/1.1.8.4/snappy-java-1.1.8.4.jar
 
 # Copy create index file into app directory into a spark container
-COPY airports_external.csv /opt/bitnami/spark/airports_external.csv
+COPY ./spark/airports_external.csv /opt/bitnami/spark/airports_external.csv
 
-COPY spark-env.sh spark-master:/opt/bitnami/spark/conf/
+COPY ./spark/spark-env.sh spark-master:/opt/bitnami/spark/conf/
 
 # Copy spark file into a container
-COPY spark_stream.py /opt/bitnami/spark/spark_stream.py
+COPY ./spark/spark_stream.py /opt/bitnami/spark/spark_stream.py
 
 # Switch back to the default user
 USER 1001
