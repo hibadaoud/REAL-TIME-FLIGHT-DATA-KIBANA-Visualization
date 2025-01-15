@@ -132,24 +132,24 @@ dataframe = dataframe.filter(~(col("arr_pos.lat").isNull() | col("arr_pos.lon").
 
 #----------------------------
 # WRITING INTO ELASTICSEARCH
-# query = dataframe.writeStream \
-#     .format("org.elasticsearch.spark.sql") \
-#     .outputMode("update") \
-#     .option("es.mapping.id", "reg_number") \
-#     .option("es.nodes", "elasticsearch") \
-#     .option("es.port", "9200") \
-#     .option("es.nodes.wan.only","true") \
-#     .option("checkpointLocation", "tmp/checkpoint2") \
-#     .option("es.resource", "esflight")\
-#     .start()
+query = dataframe.writeStream \
+    .format("org.elasticsearch.spark.sql") \
+    .outputMode("update") \
+    .option("es.mapping.id", "reg_number") \
+    .option("es.nodes", "elasticsearch") \
+    .option("es.port", "9200") \
+    .option("es.nodes.wan.only","true") \
+    .option("checkpointLocation", "tmp/checkpoint2") \
+    .option("es.resource", "esflight")\
+    .start()
 
 # Writing to console (for test and debug purposes)
-query = dataframe \
-    .writeStream \
-    .outputMode("append") \
-    .format("console") \
-    .option("truncate", False) \
-    .option("numRows", 100) \
-    .start()
+# query = dataframe \
+#     .writeStream \
+#     .outputMode("append") \
+#     .format("console") \
+#     .option("truncate", False) \
+#     .option("numRows", 100) \
+#     .start()
 
 query.awaitTermination()

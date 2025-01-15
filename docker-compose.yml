@@ -35,7 +35,7 @@ services:
       context: ./ 
       dockerfile: spark/Dockerfile
     container_name: spark-master
-    command: bash -c "bin/spark-class org.apache.spark.deploy.master.Master & spark-submit --total-executor-cores 4 --executor-memory 2g --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.4,org.apache.kafka:kafka-clients:3.2.3 spark_stream.py"
+    command: bash -c "bin/spark-class org.apache.spark.deploy.master.Master & spark-submit --total-executor-cores 4 --executor-memory 2g --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.4,org.apache.kafka:kafka-clients:3.2.3,org.elasticsearch:elasticsearch-spark-30_2.12:8.8.2,commons-httpclient:commons-httpclient:3.1 spark_stream.py >out.txt"
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -65,7 +65,81 @@ services:
     networks:
       - flight_network
 
+  elasticsearch:
+    image: hiba25/flight-dash:elasticsearch
+    container_name: elasticsearch-cntr
+    build:
+      context: .
+      dockerfile: elasticsearch/Dockerfile
+    environment:
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.ml.enabled=false
+      - cluster.name=kafka-cluster
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - discovery.type=single-node
+    volumes:
+      - ./elasticsearch/elasticsearch_data:/bitnami/elasticsearch/data
+   
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    depends_on:
+      - kafka
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - flight_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    healthcheck:
+      test: curl -u elastic:elastic -s -f elasticsearch-cntr:9200/_cat/health >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kibana:
+    container_name: kibana-cntr
+    image: bitnami/kibana:8.8.2
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - flight_network
+    links: ['elasticsearch']
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    healthcheck:
+      test: curl --fail http://kibana-cntr:5601 || exit 1
+      interval: 30s
+      retries: 3
+      timeout: 10s   
 
 networks:
   flight_network:
     driver: bridge
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  kibana_data:
+    driver: local
