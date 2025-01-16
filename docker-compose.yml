@@ -79,7 +79,7 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - discovery.type=single-node
     volumes:
-      - ./elasticsearch/elasticsearch_data:/bitnami/elasticsearch/data
+      - elasticsearch_data:/bitnami/elasticsearch/data
    
     ulimits:
       memlock:
