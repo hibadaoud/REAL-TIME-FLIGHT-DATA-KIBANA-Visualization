@@ -15,6 +15,8 @@ COPY kibana/load_ndjson.sh /usr/share/kibana/scripts/load_ndjson.sh
 COPY kibana/custom_cmd.sh /usr/share/kibana/scripts/custom_cmd.sh
 
 RUN chmod +x /usr/share/kibana/scripts/custom_cmd.sh
+RUN chmod +x /usr/share/kibana/scripts/load_ndjson.sh
+
 
 USER 1001
 

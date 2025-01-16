@@ -15,9 +15,10 @@ check_kibana_ready() {
 
 # Function to import saved objects
 import_saved_objects() {
+    echo "begin importation"
     local file_path="$1"
     local response=$(curl -s -X POST localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@"$file_path")
-    echo "$response"
+    echo "Response: $response"  
 }
 
 # Path to the export NDJSON file
