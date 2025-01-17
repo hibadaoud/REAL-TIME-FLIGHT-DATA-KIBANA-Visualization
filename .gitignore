@@ -3,3 +3,5 @@ producer.py
 spark_stream.py
 elasticsearch\elasticsearch_data
 data_eng
+web/.env
+web/node_modules

@@ -137,6 +137,29 @@ services:
       retries: 3
       timeout: 10s   
 
+  mongo:
+      container_name: mongo-cntr
+      image: mongo:latest
+      restart: always
+      ports:
+        - "27017:27017"
+      networks: 
+        - flight_network
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: "mongo"
+        MONGO_INITDB_ROOT_PASSWORD: "flight"
+      volumes:
+      - mongo_data:/data/db
+  web:
+    build:
+      context: web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth_db # Update to use the MongoDB service
+    depends_on:
+      - mongo
+
 networks:
   flight_network:
     driver: bridge
@@ -145,4 +168,6 @@ volumes:
   elasticsearch_data:
     driver: local
   kibana_data:
+    driver: local
+  mongo_data:
     driver: local
