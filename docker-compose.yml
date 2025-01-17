@@ -146,19 +146,26 @@ services:
       networks: 
         - flight_network
       environment:
-        MONGO_INITDB_ROOT_USERNAME: "mongo"
-        MONGO_INITDB_ROOT_PASSWORD: "flight"
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=flight
+      - MONGO_INITDB_DATABASE=auth_db
       volumes:
       - mongo_data:/data/db
   web:
+    container_name: web-cntr
     build:
-      context: web/Dockerfile
+      context: .
+      dockerfile: web/Dockerfile
     ports:
       - "3000:3000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/auth_db # Update to use the MongoDB service
+      - MONGO_URI=mongodb://mongo:27017/auth_db?authSource=admin # Update to use the MongoDB service
+      - MONGO_USER=mongo
+      - MONGO_PASSWORD=flight
     depends_on:
       - mongo
+    networks: 
+        - flight_network
 
 networks:
   flight_network:
