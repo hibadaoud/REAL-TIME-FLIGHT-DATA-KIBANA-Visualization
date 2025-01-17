@@ -138,19 +138,20 @@ services:
       timeout: 10s   
 
   mongo:
-      container_name: mongo-cntr
-      image: mongo:latest
-      restart: always
-      ports:
-        - "27017:27017"
-      networks: 
-        - flight_network
-      environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongo
-      - MONGO_INITDB_ROOT_PASSWORD=flight
-      - MONGO_INITDB_DATABASE=auth_db
-      volumes:
+    container_name: mongo-cntr
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    networks: 
+      - flight_network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
       - mongo_data:/data/db
+
   web:
     container_name: web-cntr
     build:
@@ -159,13 +160,13 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/auth_db?authSource=admin # Update to use the MongoDB service
-      - MONGO_USER=mongo
-      - MONGO_PASSWORD=flight
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_USER=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     depends_on:
       - mongo
     networks: 
-        - flight_network
+      - flight_network
 
 networks:
   flight_network:

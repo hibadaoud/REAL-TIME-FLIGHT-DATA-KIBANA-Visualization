@@ -6,3 +6,4 @@ data_eng
 web/.env
 web/node_modules
 web/response.json
+.env

@@ -14,12 +14,9 @@ app.use(cors())
 
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI ;
-// const mongoURI = 'mongodb+srv://fruitvision.5h1qa.mongodb.net/auth_db'; // Replace with your MongoDB URI
 mongoose.connect(
     MONGO_URI, 
     { 
-        // user: process.env.MONGO_USERNAME,
-        // pass: process.env.MONGO_PASSWORD,
         user: process.env.MONGO_USER,
         pass: process.env.MONGO_PASSWORD,
     }
