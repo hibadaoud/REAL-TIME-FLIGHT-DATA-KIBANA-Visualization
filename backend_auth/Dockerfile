@@ -5,14 +5,14 @@ FROM node:18
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY web/package*.json ./
+COPY backend_auth/package*.json ./
 
 # Install dependencies
 RUN npm install
 RUN npm install -g nodemon
 
 # Copy the rest of the application files
-COPY web .
+COPY backend_auth .
 
 # Expose the port the app runs on
 EXPOSE 3000

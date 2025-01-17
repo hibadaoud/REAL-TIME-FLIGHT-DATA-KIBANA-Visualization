@@ -27,6 +27,12 @@ mongoose.connect(
 // JWT Secret Key
 const SECRET_KEY = process.env.SECRET_KEY;
 
+// Validate Password Function
+const validatePassword = (password) => {
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+    return regex.test(password);
+};
+
 // Routes
 
 // 1. Registration Endpoint
@@ -37,6 +43,14 @@ app.post('/register', async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         return res.status(400).json({ error: 'Email already exists' });
+    }
+
+     // Validate the password
+    if (!validatePassword(password)) {
+        return res.status(400).json({
+            error:
+                'Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters.',
+        });
     }
 
     // Hash the password and save the user

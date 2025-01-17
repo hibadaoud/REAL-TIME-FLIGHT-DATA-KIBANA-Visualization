@@ -152,11 +152,12 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  web:
-    container_name: web-cntr
+  backend_auth:
+    image: hiba25/flight-dash:backend_auth
+    container_name: backend_auth-cntr
     build:
       context: .
-      dockerfile: web/Dockerfile
+      dockerfile: backend_auth/Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -165,6 +166,21 @@ services:
       - MONGO_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     depends_on:
       - mongo
+    networks: 
+      - flight_network
+
+  frontend:
+    image: hiba25/flight-dash:frontend
+    container_name: frontend-cntr
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - backend_auth
     networks: 
       - flight_network
 
