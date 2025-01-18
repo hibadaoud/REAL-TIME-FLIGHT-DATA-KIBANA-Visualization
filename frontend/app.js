@@ -67,6 +67,7 @@ if (document.getElementById("loginForm")) {
             const data = await response.json();
             if (data.token) {
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("email", data.email || email); // Save username
                 window.location.href = "dashboard.html";
             } else {
                 loginMessage.style.color = "red";
@@ -94,15 +95,18 @@ if (document.getElementById("dashboardData")) {
         })
             .then((response) => response.json())
             .then((data) => {
-                document.getElementById("dashboardData").innerText = data.message || "Welcome to the dashboard!";
+                document.getElementById("email").innerText = localStorage.getItem("email") || "Guest";
             })
             .catch(() => {
-                document.getElementById("dashboardData").innerText = "Error loading dashboard.";
+                alert("Error loading dashboard data. Redirecting to login.");
+                localStorage.removeItem("token");
+                window.location.href = "index.html";
             });
 
         document.getElementById("logoutButton").addEventListener("click", () => {
             localStorage.removeItem("token");
             window.location.href = "index.html";
         });
+
     }
 }
