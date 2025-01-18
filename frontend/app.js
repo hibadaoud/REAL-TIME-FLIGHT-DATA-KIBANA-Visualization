@@ -32,7 +32,7 @@ if (document.getElementById("registerForm")) {
                 registerMessage.style.color = "green";
                 registerMessage.textContent = data.message;
                 setTimeout(() => {
-                    window.location.href = "login.html"; // Redirect to login page
+                    window.location.href = "index.html"; // Redirect to login page
                 }, 2000);
             }
         } catch (err) {
@@ -87,7 +87,7 @@ if (document.getElementById("loginForm")) {
 if (document.getElementById("dashboardData")) {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     } else {
         fetch(`${API_BASE}/dashboard`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -102,7 +102,7 @@ if (document.getElementById("dashboardData")) {
 
         document.getElementById("logoutButton").addEventListener("click", () => {
             localStorage.removeItem("token");
-            window.location.href = "login.html";
+            window.location.href = "index.html";
         });
     }
 }
