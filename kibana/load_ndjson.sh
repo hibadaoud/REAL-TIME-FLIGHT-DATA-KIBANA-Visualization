@@ -13,19 +13,27 @@ check_kibana_ready() {
     echo "Kibana is ready."
 }
 
-# Function to import saved objects
-import_saved_objects() {
-    echo "begin importation"
-    local file_path="$1"
-    local response=$(curl -s -X POST localhost:5601/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@"$file_path")
-    echo "Response: $response"  
-}
-
-# Path to the export NDJSON file
-export_ndjson_file="/usr/share/kibana/scripts/export.ndjson"
-
-# Check if Kibana is ready
 check_kibana_ready
+sleep 10
+# Path to the NDJSON file
+file_path="/usr/share/kibana/scripts/export.ndjson"
 
-# Import the saved objects
-import_saved_objects "$export_ndjson_file"
+# Kibana API URL
+kibana_url="http://localhost:5601/api/saved_objects/_import"
+
+# Ensure the file exists
+if [[ ! -f "$file_path" ]]; then
+    echo "Error: File '$file_path' does not exist."
+    exit 1
+fi
+
+echo "Importing saved objects from: $file_path"
+
+# Execute the import using curl
+response=$(curl -v -X POST "$kibana_url" \
+    -H "kbn-xsrf: true" \
+    -H "Content-Type: multipart/form-data" \
+    --form file=@"$file_path")
+
+# Output the response
+echo "Response: $response"
