@@ -20,17 +20,22 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 50px;
+            height: 45px;
+        }
+
+        .title {
+            font-size: large;
         }
 
         .user-section {
             position: relative;
+            margin-right: 10px;
         }
 
         .user-icon {
-            font-size: 24px;
-            color: white;
             cursor: pointer;
+            width: 30px;
+            height: 30px;
         }
 
         .dropdown-menu {
@@ -43,7 +48,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            padding: 10px;
+            padding: 20px;
             z-index: 1000;
         }
 
@@ -59,6 +64,8 @@
             padding: 8px 16px;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 5px;
+            width : 100%;
         }
 
         .user-section:hover .dropdown-menu {
@@ -73,17 +80,18 @@
     </style>
 </head>
 <body id="dashboardData">
-    <div class="navbar">
-        <span>Kibana Dashboard</span>
-        <div class="user-section">
-            <img src="user.png" alt="User Icon" width="30px" height="30px" class="user-icon">
-            <div class="dropdown-menu">
-                <span id="email">User</span>
-                <button id="logoutButton">Logout</button>
+        <div class="navbar">
+            <span class="title">Kibana Dashboard</span>
+            <div class="user-section">
+                <img src="user.png" alt="User Icon" class="user-icon">
+                <div class="dropdown-menu">
+                    <span id="email">User</span>
+                    <button id="logoutButton">Logout</button>
+                </div>
             </div>
         </div>
-    </div>
-    <iframe src="http://localhost:5601/app/dashboards#/view/f9071e80-04c0-11ef-bef1-4df9537f3caa?_g=(filters:!(),refreshInterval:(pause:!f,value:30000),time:(from:now-15m,to:now))"></iframe>
-    <script src="app.js"></script>
-</body>
+        <iframe src="http://localhost:5601/app/dashboards#/view/f9071e80-04c0-11ef-bef1-4df9537f3caa?embed=true&_g=(refreshInterval:(pause:!f,value:30000),time:(from:now-15m,to:now))&_a=()"></iframe>  
+        <script src="app.js"></script>
+
+    </body>
 </html>

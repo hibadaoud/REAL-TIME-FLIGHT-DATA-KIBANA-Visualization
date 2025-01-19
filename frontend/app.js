@@ -1,5 +1,5 @@
 const API_BASE = "http://localhost:3000";
-
+ 
 // Validate Password on the Client Side
 function validatePassword(password) {
     const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
@@ -32,7 +32,7 @@ if (document.getElementById("registerForm")) {
                 registerMessage.style.color = "green";
                 registerMessage.textContent = data.message;
                 setTimeout(() => {
-                    window.location.href = "index.html"; // Redirect to login page
+                    window.location.href = "login.html"; // Redirect to login page
                 }, 2000);
             }
         } catch (err) {
@@ -52,6 +52,7 @@ if (document.getElementById("registerForm")) {
 
 // Handle Login
 if (document.getElementById("loginForm")) {
+    console.log("this is form",document.getElementById("loginForm"));
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("loginEmail").value;
@@ -88,7 +89,7 @@ if (document.getElementById("loginForm")) {
 if (document.getElementById("dashboardData")) {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "index.html";
+        window.location.href = "login.html";
     } else {
         fetch(`${API_BASE}/dashboard`, {
             headers: { Authorization: `Bearer ${token}` },
