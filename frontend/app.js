@@ -15,7 +15,7 @@ if (document.getElementById("registerForm")) {
         const registerMessage = document.getElementById("registerMessage");
 
         try {
-            const response = await fetch('http://localhost:3000/register', {
+            const response = await fetch(`${API_BASE}/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,6 +108,28 @@ if (document.getElementById("dashboardData")) {
             localStorage.removeItem("token");
             window.location.href = "index.html";
         });
+
+        document.getElementById('fetchDataButton').addEventListener('click', () => {
+            fetch(`${API_BASE}/start-producer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else {
+                        alert('Unexpected response from server');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch real-time data');
+                });
+        });
+        
 
     }
 }

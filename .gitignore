@@ -3,8 +3,9 @@ producer.py
 spark_stream.py
 elasticsearch\elasticsearch_data
 data_eng
-backend_auth/.env
-backend_auth/node_modules
-backend_auth/response.json
+backend/.env
+backend/node_modules
+backend/response.json
 .env
 .vscode
+kafka/.env

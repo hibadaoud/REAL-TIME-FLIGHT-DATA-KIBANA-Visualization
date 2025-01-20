@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 require('dotenv').config()
 const User = require('./models/User');
 const cors = require('cors')
+const { spawn } = require('child_process');
+const path = require('path');
+
 
 // Initialize Express
 const app = express();
@@ -83,7 +86,33 @@ app.post('/login', async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign({ email: user.email }, SECRET_KEY);
-    res.json({ token });
+
+    // Trigger the producer
+    const scriptPath = path.join(__dirname, 'producer_app.py');
+    const producer = spawn('python3', [scriptPath]);
+    let firstDataSent = false;
+    producer.stdout.on('data', (data) => {
+        console.log(`Producer stdout: ${data.toString()}`);
+
+        // Send response after first data is produced
+        if (!firstDataSent) {
+            firstDataSent = true;
+            res.json({ token, message: 'Login successful and producer started!' });
+        }
+    });
+
+    producer.stderr.on('data', (data) => {
+        console.error(`Producer stderr: ${data.toString()}`);
+    });
+
+    producer.on('close', (code) => {
+        if (code === 0) {
+            console.log('Producer completed successfully.');
+        } else {
+            console.error(`Producer exited with code ${code}`);
+        }
+    });
+
 });
 
 // 3. Middleware for Authentication
@@ -104,6 +133,40 @@ const authenticateToken = (req, res, next) => {
 // 4. Protected Endpoint
 app.get('/dashboard', authenticateToken, (req, res) => {
     res.json({ message: 'Welcome to the dashboard!', user: req.user });
+});
+
+// Route to trigger Kafka producer
+app.post('/start-producer', (req, res) => {
+    const scriptPath = path.join(__dirname, 'producer_app.py');
+
+    // Start the producer script
+    const producer = spawn('python3', [scriptPath]);
+
+    let firstDataSent = false;
+
+    producer.stdout.on('data', (data) => {
+        console.log(`Producer stdout: ${data.toString()}`);
+
+        // Check for the first data success signal
+        if (!firstDataSent) {
+            firstDataSent = true; // Ensure this block runs only once
+            res.status(200).json({ message: 'Producer started successfully!' });
+        }
+    });
+
+    producer.stderr.on('data', (data) => {
+        console.error(`Producer stderr: ${data.toString()}`);
+    });
+
+    producer.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`Producer exited with code ${code}`);
+            if (!firstDataSent) {
+                return res.status(500).json({ message: `Producer failed with code ${code}` });
+            }
+        }
+        console.log('Producer process completed.');
+    });
 });
 
 // Start Server

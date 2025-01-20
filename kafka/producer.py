@@ -2,11 +2,16 @@ from confluent_kafka import Producer
 import requests
 import json
 import time
+from dotenv import load_dotenv
+import os
+
+# Load variables from .env file
+load_dotenv()
 
 # Kafka Producer Configuration
 producer = Producer({'bootstrap.servers': 'localhost:9093'})
 
-api_url = "https://airlabs.co/api/v9/flights?api_key=ff090b3e-09ef-476c-939f-70d276978db3"
+api_url = os.getenv('api_url')
 
 # Periodically fetch and publish data to Kafka
 try:

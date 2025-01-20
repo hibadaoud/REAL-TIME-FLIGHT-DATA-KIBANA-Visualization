@@ -77,18 +77,30 @@
             width: 100%;
             height: calc(100% - 50px); /* Adjust height to leave space for navbar */
         }
+        .btn{
+            background-color: #addbe9;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body id="dashboardData">
         <div class="navbar">
             <span class="title">Kibana Dashboard</span>
+
+            <button id="fetchDataButton" class="btn btn-primary">Fetch Real-Time Data</button>
+
             <div class="user-section">
                 <img src="user.png" alt="User Icon" class="user-icon">
                 <div class="dropdown-menu">
                     <span id="email">User</span>
                     <button id="logoutButton">Logout</button>
                 </div>
-            </div>
+            </div>    
+            
         </div>
         <iframe src="http://localhost:5601/app/dashboards#/view/f9071e80-04c0-11ef-bef1-4df9537f3caa?embed=true&_g=(refreshInterval:(pause:!f,value:30000),time:(from:now-15m,to:now))&_a=()"></iframe>  
         <script src="app.js"></script>
