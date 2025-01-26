@@ -111,3 +111,53 @@ Manages core functionality and processing:
 #### **4. Process-Centric Layer**  
 Coordinates user actions and system workflows:
 - **Node.js (Express)**: Provides REST APIs for login, registration, fetching real-time data, and triggering producer actions.
+
+## 🐳 Dockerized Environment
+To ensure seamless operation and management, our project is built upon a Dockerized environment, encapsulating each component of the system within its own container. This approach not only fosters a modular architecture, making it easier to update and maintain individual parts without affecting the whole system, but also enhances scalability and fault tolerance. 
+
+Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
+
+## Services
+### Kakfa Integration: 
+- Kafka is used as a message broker, enabling real-time data streaming. It fetches data from Airlabs API using `api_key` and distributes it for processing and visualization.
+- For that we used these services:
+    - Zookeeper:
+        - Coordinates and manages Kafka brokers.
+        - Required for Kafka to function properly.
+    - Kafka:
+        - Streams real-time data using topics.
+        - Acts as the backbone for data ingestion and distribution.
+- **Producer:** Publishes flight data fetched from the Airlabs API into a Kafka topic (flights).
+    - `Producer({'bootstrap.servers': 'kafka:9093'})`: Connects the producer to Kafka inside the Docker network to publish messages to a topic. Used in `producer_app.py` because the producer is launched from the backend service, triggered by a user action. This communicates with Kafka internally within the Docker network.
+    - `Producer({'bootstrap.servers': 'localhost:9092'})`: Connects the producer to Kafka outside Docker via the host's port to publish messages. Used in `producer.py` to manually test and launch the producer independently. This setup allows testing Kafka locally and running the consumer locally to observe the output of the Kafka service independently.
+- **Consumer:** Subscribes to the flights topic, retrieves data, and stores it in `fetched_data.json`
+    ```
+        consumer = Consumer({
+        'bootstrap.servers': 'localhost:9093' ,
+        'group.id': 'my-group',                
+        'auto.offset.reset': 'earliest'      
+        })
+    ```
+- **Steps to Launch Kafka and retrieves data Locally**
+    - Start `docker-compose.yml`:
+        ```
+        docker-compose up -d
+        ```
+    - Install Python Dependencies: In the Kafka directory, install the required Python packages:
+
+        ```
+        pip install requests confluent_kafka python-dotenv
+        ```
+    - In the Kafka directory, create a `.env` file with the following content:
+        ```
+        API_URL="https://airlabs.co/api/v9/flights?api_key=<your-key>"
+        ```
+    - Start the Producer
+        ```
+        python kafka/producer.py
+        ```
+    - **In another terminal**, start the Consumer
+        ```
+        python kafka/consumer.py
+        ```
+        This will generate a `fetched_data.json` file containing the retrieved and processed data.
