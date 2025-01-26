@@ -72,8 +72,6 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
 - **Dockerized Services:** All services are containerized for portability and scalability.
 - **Container Orchestration:** Docker Compose manages service dependencies and networking.
 
----
-
 ## 🛠️ **Technologies Used**
 
 | **Technology**        | **Purpose**                                                                 |
@@ -86,3 +84,30 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
 | MongoDB               | Stores user credentials.                               |
 | HTML, CSS, JS         | Builds the web interface.                                                   |
 | Docker                | Manages services in isolated and consistent environments.                  |
+
+## 🏛️ Architecture
+
+The web application incorporates **JWT-based authentication** for secure user authorization, with user credentials securely stored in **MongoDB**. Upon successful login, a **Kibana dashboard** is displayed, presenting **real-time flight data** retrieved from the **Airlabs API**, which offers extensive information on air traffic and airport density.
+
+The data flow begins with a **Kafka producer**, which transmits the flight data to a topic named `flight`. For data processing, **Apache Spark** subscribes to the `flight` topic, retrieves the data, processes it, and sends the results to **Elasticsearch**, where it is stored in the `esflight` index. 
+
+The **Kibana dashboard** is used to visualize the processed data in real time with precision. This dashboard is seamlessly embedded within the web application, providing users with a unified and interactive experience.
+
+#### **1. Data Layer**  
+Manages and stores persistent data:
+- **MongoDB**: Handles user authentication data (email, password, tokens).  
+- **Elasticsearch**: Stores and queries processed real-time flight data visualized in Kibana.
+
+#### **2. Adapter Layer**  
+Connects external API with internal systems:
+- **Kafka**: Ingests and distributes real-time flight data.  
+- **Python Requests**: Fetches data from **Airlabs Data APIs** and sends it to Kafka for processing.
+
+#### **3. Business Logic Layer**  
+Manages core functionality and processing:
+- **Pyspark**: Processes real-time flight data from Kafka, transforms it and indexes it into Elasticsearch.  
+- **Node.js (Express)**: Implements backend logic, including user authentication.
+
+#### **4. Process-Centric Layer**  
+Coordinates user actions and system workflows:
+- **Node.js (Express)**: Provides REST APIs for login, registration, fetching real-time data, and triggering producer actions.
