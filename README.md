@@ -22,20 +22,20 @@
 
 ## 📌 Project Overview  
 
-This project, developed by Hiba Daoud & Saad Raza as part of their academic work at the University of Trento, implements a **Real-Time Flight Data Visualization Dashboard** that provides an interactive interface to monitor live flight data, airport informations and aircraft informations. 
+This project, developed by Hiba Daoud and Saad Raza as part of their academic journey at the University of Trento, delivers a **Real-Time Flight Data Visualization Dashboard** offering an interactive platform to monitor live flight data, airport details, and aircraft statistics.
 
 ### **Project Requirements**
 
 - **Layered Architecture Implementation**:
-    1. Data Layer    
-    2. Adapter Layer  
-    3. Business Logic Layer   
-    4. Process-Centric Layer
-    5. Visualization Layer
-    6. Authentication System
+    - Data Layer    
+    - Adapter Layer  
+    - Business Logic Layer   
+    - Process-Centric Layer
+    - Visualization Layer
+    - Authentication System
 
 - **General Design Principles:**
-    - **Modular and Scalable Services**: designed for reusability and easy scaling across different environments.  
+    - **Modular** and **Scalable** services designed for reusability and easy scaling across different environments.  
     -  Services interact exclusively through **REST APIs** for standardized communication.  
     - **Internal and External Integration**: Incorporates external flight data API and internal data processing and visualization components.  
 
@@ -82,7 +82,7 @@ This project, developed by Hiba Daoud & Saad Raza as part of their academic work
 | PySpark               | Processes, transforms, and enriches real-time flight data.                 |
 | Elasticsearch         | Indexes processed data for visualization in Kibana.                        |
 | Kibana                | Provides real-time data visualization on a Dashboard.              |
-| Node.js (Express)     | Handles user authentication and user-triggered actions and coordinates API interactions.           |
+| Node.js (Express)     | Handles user authentication and user-triggered actions.           |
 | MongoDB               | Stores user credentials.                               |
 | HTML, CSS, JS         | Builds the web interface.                                                   |
 | Docker                | Manages services in isolated and consistent environments.                  |
