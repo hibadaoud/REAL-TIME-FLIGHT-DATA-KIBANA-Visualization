@@ -5,17 +5,10 @@
 - [🔑 Key Objectives](#-key-objectives)
 - [🛠️ Technologies Used](#-technologies-used)
 - [🏛️ Architecture](#-architecture)
-- [📜 Data](#-data)
-- [🧠 Model](#-model)
-   - [🗂️ Data Annotation: Transformation to COCO Format](#️-data-annotation-transformation-to-coco-format)
-   - [🧠 Model Architecture](#-model-architecture)
-- [🔗 Model Integration](#-model-integration) 
-- [🛠️ Node.js Express Backend](#️-nodejs-express-backend)
-- [📱 Flutter Application](#️-flutter_application)
-- [🐳 Dockerization](#-dockerization)  
-- [☁️ Deployment Using Terraform](#-deployment-using-terraform)
-- [📱 Results: Application interfaces](#-results-application-interfaces)
+- [🐳 Dockerized Environment](#-dockerized-environment)
 - [🔧 Setup and usage](#-setup-and-usage)
+- [⚙️ Services](#-services)
+- [🖥️ Results](#-results)
 - [🔮 Future Considerations](#-future-considerations)
 - [👨‍💻 Project By](#-project-by)
 
@@ -117,7 +110,20 @@ To ensure seamless operation and management, our project is built upon a Dockeri
 
 Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
 
-## Services
+## 🔧 Setup and Usage
+- In order to see the web application with Real Time visualization Dashboard you just need to run the  `docker-compose.yml`:
+    ```bash
+        docker-compose up -d
+    ```
+- Access the web application via `http://localhost:8080`.
+- The landing page provides navigation options to login or register.
+- Upon successful login, the Kibana dashboard is displayed with Real Time data
+- The button Fetch Real Time Data is used for retrieving new data when needed.
+
+> [!NOTE]
+> Note that this is only for seeing results directly but we will detail every service and its usage in the next section.
+
+## ⚙️ Services
 ### Kakfa service: 
 - Kafka is used as a message broker, enabling real-time data streaming. It fetches data from Airlabs API using `api_key` and distributes it for processing and visualization.
 - **Services in `docker-compose.yml`**
@@ -289,7 +295,46 @@ The backend service is the core API for user authentication, data handling, and 
         curl -X GET http://localhost:3000/dashboard \
         -H "Authorization: Bearer <your-jwt-token>"
         ```
-    - `<your-jwt-token>` is stored in `response.json`
+       `<your-jwt-token>` is stored in `response.json`
+
+### Frontend Service 
+The frontend service provides an intuitive and user-friendly web interface for the Real-Time Flight Visualization Dashboard. It enables users to interact with the application for tasks such as login, registration, and viewing real-time flight data via the embedded Kibana dashboard.
+- **Steps to Launch the Backend**
+    - Start `docker-compose.yml`:
+            ```bash
+            docker-compose up -d
+            ```
+    - Access the web application via `http://localhost:8080`.
+
+## 🖥️ Results
+![index-page](img/index.jpg)
+![login-page](img/login.jpg)
+![register-page](img/register.jpg)
+![dashboard-page](img/dashboard.jpg)
+
+Let us now focus on the graphs developed during the data visualization process. We have chosen to divide our dashboard into three sections: airport information, flight information, and aircraft information.
+### Airport Information
+For this section of the dashboard, we focused on information useful for airport administrators, notably the total number of flights related to that airport and the flow of departures and arrivals. The figure above shows an overview for all airports, but the available filters allow selecting a specific airport or region.
+
+![Airport-information](img/Airport-Information.png)
+
+### Flight Information
+For this part of the dashboard, we visualize on the map the position of aircraft, their departure and arrival airports sorted by their speeds or altitudes as needed. Then, on the left, we have for each type of aircraft, the types of routes it operates. We notice that the larger the aircraft, the more capable it is of performing long-haul flights. Similarly, we can see on the right side of the drawing, the most frequent flights by geographical region. This approach provides the most information possible about the nature of flights, their frequencies, and the type of aircraft that operates them.
+
+![Flight-information](img/Flight-information.jpeg)
+
+### Aircraft Information
+Finally, for the section related to the aircraft itself, using the data available on the API, we can determine the average and maximum speeds of aircraft as well as their speeds relative to their altitudes to ultimately identify the fastest aircraft and rank them in descending order.
+![Aircraft-information](img/Aircraft-information.png)
+
+### Filters' addition
+In addition to graphics, we have developed a variety of filters that make dashboars customizable and interactive. In particular, we use a filter for the flight code, the departure or arrival, the status of the flight or its type but also the airline and the aircraft code.
+The filters can be found in the dashboard header as follows:
+
+![Filters](img/cover-filters.png)
+
+
+
 
 
 
