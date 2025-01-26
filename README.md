@@ -120,7 +120,7 @@ Each service, from Kafka for real-time data ingestion to Kibana for insightful v
 ## Services
 ### Kakfa Integration: 
 - Kafka is used as a message broker, enabling real-time data streaming. It fetches data from Airlabs API using `api_key` and distributes it for processing and visualization.
-- For that we used these services:
+- **Services in `docker-compose.yml`**
     - **Zookeeper**: `docker.io/bitnami/zookeeper:3.8`
         - Coordinates and manages Kafka brokers.
         - Required for Kafka to function properly.
@@ -199,4 +199,23 @@ The Spark service processes real-time flight data retrieved from the Kafka topic
         ```bash
         docker logs -f spark-master
         ```
-        
+
+### Elasticsearch Integration:   
+Elasticsearch is responsible for storing and indexing the processed flight data to enable efficient querying and real-time visualization in Kibana. It depends on the Kafka service to retrieve processed data streams from the flights topic for indexing. This ensures persistent data storage, allowing historical data to remain accessible even when services are stopped or no new data is being ingested.
+- **Docker image**: Custom image `hiba25/flight-dash:elasticsearch` built with the necessary Elasticsearch setup from `elasticsearch/Dockerfile'
+-`custom_startup.sh`: Automates Elasticsearch initialization, waits for readiness, and creates the `esflight `index using `create_index_elastic.py`
+-`create_index_elastic.py`: Defines and creates the esflight index with necessary mappings in Elasticsearch.
+- **Steps to Launch Elasticsearch**
+    - Start `docker-compose.yml`:
+        ```bash
+        docker-compose up -d
+        ```
+    - Use Elasticsearch HTTP API `localhost:9200` to query data directly or ensure data is flowing into the esflight index after Spark processing:
+        ```bash
+        curl -X GET "localhost:9200/esflight/_search?pretty"
+        ```
+    - To know how much data is stored in elasticsearch browse `http://localhost:9200/esflight/_count`
+    
+
+
+
