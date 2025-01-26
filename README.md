@@ -241,23 +241,19 @@ Kibana serves as the **real-time data visualization** layer in this project, con
 
 ###  Backend Service 
 The backend service is the core API for user authentication, data handling, and Kafka producer triggering. It connects with other services, such as MongoDB for storing user credentials and Kafka for data streaming, and provides RESTful endpoints for user interactions.
-
 - **Services Used**
     - **MongoDB** : `mongo:latest`
         - **Purpose**: Stores user authentication data (email, password, tokens).  
         - **Integration**: MongoDB is accessed via Mongoose in the `server.js` file for operations like user registration and login.
-
     - **Kafka**  
         - **Purpose**: Acts as the message broker for streaming flight data.  
         - **Integration**: Upon successful user login, the backend triggers the Kafka producer (`producer_app.py`) to fetch and publish real-time flight data.
-
     - **Node.js (Express)** `hiba25/flight-dash:backend`  
         - **Purpose**: Implements RESTful APIs for user authentication (`/register`, `/login`) and producer management (`/start-producer`).  
-        - **Docker Image**: Custom image built from `backenf/Dockerfile` to install Python and nodejs dependencies.
+        - **Docker Image**: Custom image built from `backend/Dockerfile` to install Python and nodejs dependencies.
 - `server.js`: Contains the API logic and middleware for authentication. It handles user authentication, token validation, and producer control.
     - **Login API**: Triggers the Kafka producer and returns a **JWT token** upon successful login.
     - **Protected API**: `/dashboard` uses JWT to allow access only to authenticated users.
-
 - **Steps to Launch the Backend**
     - In the same directory as `docker-compose.yml`, create a `.env` file with the following content:
         ```
@@ -266,11 +262,11 @@ The backend service is the core API for user authentication, data handling, and 
         MONGO_INITDB_DATABASE=auth_db
         MONGO_URI=mongodb://mongo:27017/auth_db?authSource=admin
         API_URL = "https://airlabs.co/api/v9/flights?api_key=<your-key>"
-        ``
+        ```
     - In the backend directory, create a `.env` file with the following content:
         ```
         SECRET_KEY=<your secret key>
-        ``
+        ```
         You can obtain it executing these commands in the terminal after installing `node` from the source web page
         ```
         node
@@ -293,7 +289,7 @@ The backend service is the core API for user authentication, data handling, and 
         curl -X GET http://localhost:3000/dashboard \
         -H "Authorization: Bearer <your-jwt-token>"
         ```
-    <your-jwt-token> is stored in `response.json`
+    - `<your-jwt-token>` is stored in `response.json`
 
 
 
