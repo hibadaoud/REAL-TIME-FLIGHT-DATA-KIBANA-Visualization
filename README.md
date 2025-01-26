@@ -121,10 +121,10 @@ Each service, from Kafka for real-time data ingestion to Kibana for insightful v
 ### Kakfa Integration: 
 - Kafka is used as a message broker, enabling real-time data streaming. It fetches data from Airlabs API using `api_key` and distributes it for processing and visualization.
 - For that we used these services:
-    - Zookeeper:
+    - **Zookeeper**: `docker.io/bitnami/zookeeper:3.8`
         - Coordinates and manages Kafka brokers.
         - Required for Kafka to function properly.
-    - Kafka:
+    - **Kafka**: `docker.io/bitnami/kafka:3.3`
         - Streams real-time data using topics.
         - Acts as the backbone for data ingestion and distribution.
 - **Producer:** Publishes flight data fetched from the Airlabs API into a Kafka topic (flights).
@@ -150,7 +150,7 @@ Each service, from Kafka for real-time data ingestion to Kibana for insightful v
         ```
     - In the Kafka directory, create a `.env` file with the following content:
         ```
-        API_URL="https://airlabs.co/api/v9/flights?api_key=<your-key>"
+        api_url="https://airlabs.co/api/v9/flights?api_key=<your-key>"
         ```
     - Start the Producer
         ```
@@ -161,3 +161,42 @@ Each service, from Kafka for real-time data ingestion to Kibana for insightful v
         python kafka/consumer.py
         ```
         This will generate a `fetched_data.json` file containing the retrieved and processed data.
+
+### Spark Integration: 
+The Spark service processes real-time flight data retrieved from the Kafka topic, enriches it with additional information (e.g., airport names, flight types), and stores it in Elasticsearch for visualization in Kibana.
+
+- **Services in `docker-compose.yml`**
+    - **spark-master** : `hiba25/flight-dash:spark-master`
+        - Custom image built from `spark/Dockerfile` from 'bitnami/spark:3.2.4' base image.
+        - Acts as the master node of the Spark cluster.  
+    - **spark-worker-1** : `hiba25/flight-dash:spark-worker-1`
+        - Custom image built from `spark/Dockerfile` from 'bitnami/spark:3.2.4' base image.
+        - Acts as a worker node to assist the master node in processing tasks.  
+        - Connects to the Spark master at `spark://spark-master:7077`.
+
+- **Steps Performed in `spark_stream.py`**
+    1. **Reading from Kafka:**
+    - Subscribes to the Kafka topic `flights` using the broker `kafka:9092`.  
+    - Consumes incoming messages in real-time.
+
+    2. **Data Enrichment:**
+    - Enriches data with attributes like `type` which specify if the flight is domestic or international.  
+    - Maps IATA codes (`dep_iata`, `arr_iata`) to airport details such as names and positions using `airports_external.csv` creating new fields: `Arrival`, `Departure`, `dep_pos`, `arr_pos`
+    - Cleans and filters rows with missing fields.
+
+    3. **Writing to Elasticsearch:**
+    - Stores the enriched data in the Elasticsearch index `esflight`.  
+    - Ensures unique records using `reg_number` as the identifier.
+
+- **Steps to Launch Spark Locally**
+    - Replace `SPARK_PUBLIC_DNS` with **your local ip** in 'spark-env.sh'.
+    - To see the Spark processing results independently in the console, comment out the Elasticsearch writing code and uncomment the `writeStream` section configured for console output.
+    - Start `docker-compose.yml`:
+        ```bash
+        docker-compose up -d
+        ```
+    - The processed data will be printed in a table in the logs of the `spark-master` container.
+        ```bash
+        docker logs -f spark-master
+        ```
+        
