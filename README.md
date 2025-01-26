@@ -118,7 +118,7 @@ To ensure seamless operation and management, our project is built upon a Dockeri
 Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
 
 ## Services
-### Kakfa Integration: 
+### Kakfa service: 
 - Kafka is used as a message broker, enabling real-time data streaming. It fetches data from Airlabs API using `api_key` and distributes it for processing and visualization.
 - **Services in `docker-compose.yml`**
     - **Zookeeper**: `docker.io/bitnami/zookeeper:3.8`
@@ -162,7 +162,7 @@ Each service, from Kafka for real-time data ingestion to Kibana for insightful v
         ```
         This will generate a `fetched_data.json` file containing the retrieved and processed data.
 
-### Spark Integration: 
+### Spark Service: 
 The Spark service processes real-time flight data retrieved from the Kafka topic, enriches it with additional information (e.g., airport names, flight types), and stores it in Elasticsearch for visualization in Kibana.
 
 - **Services in `docker-compose.yml`**
@@ -216,18 +216,16 @@ Elasticsearch is responsible for storing and indexing the processed flight data 
         ```
     - To know how much data is stored in elasticsearch browse `http://localhost:9200/esflight/_count`
     
-## 📊 **Kibana Service**
+### **Kibana Service**
 
 Kibana serves as the **real-time data visualization** layer in this project, connecting to Elasticsearch to fetch and display processed flight data. The data is displayed in custom dashboard with insightful graphs and maps. The dashboard is embedded into the web application using an `iframe`, providing users with an interactive and seamless visualization experience.
 - **Kibana image**: Custom image `hiba25/flight-dash:kibana` built with the necessary Kiabana setup from `kibana/Dockerfile'.
 - `custom_cmd.sh`:
    - Executes essential setup scripts and ensures Kibana runs smoothly.
    - Calls `load_ndjson.sh` to import the preconfigured dashboard into Kibana.
-
 - `load_ndjson.sh`:
    - Imports saved the Kibana dashboard using the Kibana API.
    - Ensures the dashboard is available immediately after starting the Kibana container.
-
 - `export.ndjson`:
    - Contains the exported configuration for Kibana dashboard, visualization, and saved objects.
    - Loaded into Kibana on startup to provide prebuilt visualizations.
@@ -240,5 +238,66 @@ Kibana serves as the **real-time data visualization** layer in this project, con
     - Go to Management > StackManagement > Kibana > Saved Objects
     - You will see Airport Managment Dashboard, click on it and vizualize the data with custom graphs
     - If not import `export.ndjson` manually.
+
+###  Backend Service 
+The backend service is the core API for user authentication, data handling, and Kafka producer triggering. It connects with other services, such as MongoDB for storing user credentials and Kafka for data streaming, and provides RESTful endpoints for user interactions.
+
+- **Services Used**
+    - **MongoDB** : `mongo:latest`
+        - **Purpose**: Stores user authentication data (email, password, tokens).  
+        - **Integration**: MongoDB is accessed via Mongoose in the `server.js` file for operations like user registration and login.
+
+    - **Kafka**  
+        - **Purpose**: Acts as the message broker for streaming flight data.  
+        - **Integration**: Upon successful user login, the backend triggers the Kafka producer (`producer_app.py`) to fetch and publish real-time flight data.
+
+    - **Node.js (Express)** `hiba25/flight-dash:backend`  
+        - **Purpose**: Implements RESTful APIs for user authentication (`/register`, `/login`) and producer management (`/start-producer`).  
+        - **Docker Image**: Custom image built from `backenf/Dockerfile` to install Python and nodejs dependencies.
+- `server.js`: Contains the API logic and middleware for authentication. It handles user authentication, token validation, and producer control.
+    - **Login API**: Triggers the Kafka producer and returns a **JWT token** upon successful login.
+    - **Protected API**: `/dashboard` uses JWT to allow access only to authenticated users.
+
+- **Steps to Launch the Backend**
+    - In the same directory as `docker-compose.yml`, create a `.env` file with the following content:
+        ```
+        MONGO_INITDB_ROOT_USERNAME=<mongo_username>
+        MONGO_INITDB_ROOT_PASSWORD=<mongo_password>
+        MONGO_INITDB_DATABASE=auth_db
+        MONGO_URI=mongodb://mongo:27017/auth_db?authSource=admin
+        API_URL = "https://airlabs.co/api/v9/flights?api_key=<your-key>"
+        ``
+    - In the backend directory, create a `.env` file with the following content:
+        ```
+        SECRET_KEY=<your secret key>
+        ``
+        You can obtain it executing these commands in the terminal after installing `node` from the source web page
+        ```
+        node
+        require('crypto').randomBytes(64).toString('hex')
+        ``
+     - Start `docker-compose.yml`:
+        ```bash
+        docker-compose up -d
+        ```
+    - Use backend HTTP API `localhost:3000` endpoints to locally try user authentication and authorization.
+        ```bash
+        curl -X POST http://localhost:3000/register \
+        -H "Content-Type: application/json" \
+        -d '{"email": "testuser@example.com", "password": "securepassword123"}'
+
+        curl -X POST http://localhost:3000/login \
+        -H "Content-Type: application/json" \
+        -d '{"email": "testuser@example.com", "password": "securepassword123"}' -o response.json
+
+        curl -X GET http://localhost:3000/dashboard \
+        -H "Authorization: Bearer <your-jwt-token>"
+        ```
+    <your-jwt-token> is stored in `response.json`
+
+
+
+
+
 
 
