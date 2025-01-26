@@ -167,29 +167,29 @@ The Spark service processes real-time flight data retrieved from the Kafka topic
 
 - **Services in `docker-compose.yml`**
     - **spark-master** : `hiba25/flight-dash:spark-master`
-        - Custom image built from `spark/Dockerfile` from 'bitnami/spark:3.2.4' base image.
+        - Custom image built from `spark/Dockerfile` to install Python dependencies, Scala, and configure Spark with specific scripts.
         - Acts as the master node of the Spark cluster.  
     - **spark-worker-1** : `hiba25/flight-dash:spark-worker-1`
-        - Custom image built from `spark/Dockerfile` from 'bitnami/spark:3.2.4' base image.
+        - Custom image built from `spark/Dockerfile`. Shares the same build as Spark Master for consistency.
         - Acts as a worker node to assist the master node in processing tasks.  
         - Connects to the Spark master at `spark://spark-master:7077`.
 
 - **Steps Performed in `spark_stream.py`**
-    1. **Reading from Kafka:**
-    - Subscribes to the Kafka topic `flights` using the broker `kafka:9092`.  
-    - Consumes incoming messages in real-time.
+    - **Reading from Kafka:**
+        - Subscribes to the Kafka topic `flights` using the broker `kafka:9092`.  
+        - Consumes incoming messages in real-time.
 
-    2. **Data Enrichment:**
-    - Enriches data with attributes like `type` which specify if the flight is domestic or international.  
-    - Maps IATA codes (`dep_iata`, `arr_iata`) to airport details such as names and positions using `airports_external.csv` creating new fields: `Arrival`, `Departure`, `dep_pos`, `arr_pos`
-    - Cleans and filters rows with missing fields.
+    - **Data Enrichment:**
+        - Enriches data with attributes like `type` which specify if the flight is domestic or international.  
+        - Maps IATA codes (`dep_iata`, `arr_iata`) to airport details such as names and positions using `airports_external.csv` creating new fields: `Arrival`, `Departure`, `dep_pos`, `arr_pos`
+        - Cleans and filters rows with missing data fields.
 
-    3. **Writing to Elasticsearch:**
-    - Stores the enriched data in the Elasticsearch index `esflight`.  
-    - Ensures unique records using `reg_number` as the identifier.
+    - **Writing to Elasticsearch:**
+        - Stores the enriched data in the Elasticsearch index `esflight`.  
+        - Ensures unique records using `reg_number` as the identifier.
 
 - **Steps to Launch Spark Locally**
-    - Replace `SPARK_PUBLIC_DNS` with **your local ip** in 'spark-env.sh'.
+    - Replace `SPARK_PUBLIC_DNS` with **your local ip** in `spark-env.sh`.
     - To see the Spark processing results independently in the console, comment out the Elasticsearch writing code and uncomment the `writeStream` section configured for console output.
     - Start `docker-compose.yml`:
         ```bash
