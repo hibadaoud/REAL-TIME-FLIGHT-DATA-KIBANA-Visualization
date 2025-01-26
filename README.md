@@ -202,9 +202,9 @@ The Spark service processes real-time flight data retrieved from the Kafka topic
 
 ### Elasticsearch Integration:   
 Elasticsearch is responsible for storing and indexing the processed flight data to enable efficient querying and real-time visualization in Kibana. It depends on the Kafka service to retrieve processed data streams from the flights topic for indexing. This ensures persistent data storage, allowing historical data to remain accessible even when services are stopped or no new data is being ingested.
-- **Docker image**: Custom image `hiba25/flight-dash:elasticsearch` built with the necessary Elasticsearch setup from `elasticsearch/Dockerfile'
--`custom_startup.sh`: Automates Elasticsearch initialization, waits for readiness, and creates the `esflight `index using `create_index_elastic.py`
--`create_index_elastic.py`: Defines and creates the esflight index with necessary mappings in Elasticsearch.
+- **Elasticsearch image**: Custom image `hiba25/flight-dash:elasticsearch` built with the necessary Elasticsearch setup from `elasticsearch/Dockerfile'.
+- `custom_startup.sh`: Automates Elasticsearch initialization, waits for readiness, and creates the `esflight` index using `create_index_elastic.py`
+-   `create_index_elastic.py`: Defines and creates the esflight index with necessary mappings in Elasticsearch.
 - **Steps to Launch Elasticsearch**
     - Start `docker-compose.yml`:
         ```bash
@@ -216,6 +216,29 @@ Elasticsearch is responsible for storing and indexing the processed flight data 
         ```
     - To know how much data is stored in elasticsearch browse `http://localhost:9200/esflight/_count`
     
+## 📊 **Kibana Service**
 
+Kibana serves as the **real-time data visualization** layer in this project, connecting to Elasticsearch to fetch and display processed flight data. The data is displayed in custom dashboard with insightful graphs and maps. The dashboard is embedded into the web application using an `iframe`, providing users with an interactive and seamless visualization experience.
+- **Kibana image**: Custom image `hiba25/flight-dash:kibana` built with the necessary Kiabana setup from `kibana/Dockerfile'.
+- `custom_cmd.sh`:
+   - Executes essential setup scripts and ensures Kibana runs smoothly.
+   - Calls `load_ndjson.sh` to import the preconfigured dashboard into Kibana.
+
+- `load_ndjson.sh`:
+   - Imports saved the Kibana dashboard using the Kibana API.
+   - Ensures the dashboard is available immediately after starting the Kibana container.
+
+- `export.ndjson`:
+   - Contains the exported configuration for Kibana dashboard, visualization, and saved objects.
+   - Loaded into Kibana on startup to provide prebuilt visualizations.
+- **Steps to Launch Kibana**
+    - Start `docker-compose.yml`:
+        ```bash
+        docker-compose up -d
+        ```
+    - Browse Kibana HTTP API `localhost:5601` to visualize and interacte with data stored in Elasticsearch.
+    - Go to Management > StackManagement > Kibana > Saved Objects
+    - You will see Airport Managment Dashboard, click on it and vizualize the data with custom graphs
+    - If not import `export.ndjson` manually.
 
 
