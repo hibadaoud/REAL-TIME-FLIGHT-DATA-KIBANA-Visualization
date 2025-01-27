@@ -301,9 +301,9 @@ The backend service is the core API for user authentication, data handling, and 
 The frontend service provides an intuitive and user-friendly web interface for the Real-Time Flight Visualization Dashboard. It enables users to interact with the application for tasks such as login, registration, and viewing real-time flight data via the embedded Kibana dashboard.
 - **Steps to Launch the Backend**
     - Start `docker-compose.yml`:
-            ```bash
-            docker-compose up -d
-            ```
+        ```bash
+        docker-compose up -d
+        ```
     - Access the web application via `http://localhost:8080`.
 
 ## 🖥️ Results
