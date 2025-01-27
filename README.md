@@ -336,6 +336,21 @@ The filters can be found in the dashboard header as follows:
 
 ![Filters](img/cover-filters.png)
 
+## 🔮 Future Considerations
+
+### 1. **Streamlined Data Orchestration**  
+Automate the end-to-end workflow for data ingestion, processing, and storage using **Apache Airflow**. This will enable better scheduling, error handling, and task dependencies, making the pipeline more efficient and less error-prone.
+
+### 2. **Scalable Deployment Architecture**  
+Leverage **Kubernetes** for container orchestration to ensure service scalability and fault tolerance. Implement **CI/CD pipelines** with tools like **Jenkins** to automate testing and deployment, reducing manual effort and improving reliability.
+
+### 3. **Dynamic Load Balancing**  
+Introduce load balancing mechanisms to distribute traffic across multiple instances of the services dynamically. This will improve system performance and ensure stability during peak usage.
+
+## 👨‍💻 Project by  
+<a href="https://github.com/hibadaoud/hibadaoud/REAL-TIME-FLIGHT-DATA-KIBANA-Visualization/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=hibadaoud/REAL-TIME-FLIGHT-DATA-KIBANA-Visualization"/>
+</a>
 
 
 
