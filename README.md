@@ -111,7 +111,25 @@ To ensure seamless operation and management, our project is built upon a Dockeri
 Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
 
 ## 🔧 Setup and Usage
-- In order to see the web application with Real Time visualization Dashboard you just need to run the  `docker-compose.yml`:
+In order to see the web application with Real Time visualization Dashboard you just need to:
+- create a `.env` file, in the same directory as `docker-compose.yml`,  with the following content:
+    ```
+    MONGO_INITDB_ROOT_USERNAME=<mongo_username>
+    MONGO_INITDB_ROOT_PASSWORD=<mongo_password>
+    MONGO_INITDB_DATABASE=auth_db
+    MONGO_URI=mongodb://mongo:27017/auth_db?authSource=admin
+    API_URL = "https://airlabs.co/api/v9/flights?api_key=<your-key>"
+    ```
+- In the backend directory, create a `.env` file with the following content:
+    ```
+    SECRET_KEY=<your secret key>
+    ```
+    You can obtain it executing these commands in the terminal after installing `node` from the source web page
+    ```
+    node
+    require('crypto').randomBytes(64).toString('hex')
+    ```
+- Start `docker-compose.yml`:
     ```bash
         docker-compose up -d
     ```
@@ -206,7 +224,7 @@ The Spark service processes real-time flight data retrieved from the Kafka topic
         docker logs -f spark-master
         ```
 
-### Elasticsearch Integration:   
+### Elasticsearch service:   
 Elasticsearch is responsible for storing and indexing the processed flight data to enable efficient querying and real-time visualization in Kibana. It depends on the Kafka service to retrieve processed data streams from the flights topic for indexing. This ensures persistent data storage, allowing historical data to remain accessible even when services are stopped or no new data is being ingested.
 - **Elasticsearch image**: Custom image `hiba25/flight-dash:elasticsearch` built with the necessary Elasticsearch setup from `elasticsearch/Dockerfile'.
 - `custom_startup.sh`: Automates Elasticsearch initialization, waits for readiness, and creates the `esflight` index using `create_index_elastic.py`
