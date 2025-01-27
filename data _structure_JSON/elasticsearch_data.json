@@ -1,21 +1,34 @@
 {
-    "position":{"type":"geo_point"},
-    "hex": { "type": "keyword" },
-    "reg_number":{"type": "keyword"},
-    "flag":{"type":"keyword"},
-    "alt":{"type":"float"},
-    "dir":{"type":"float"},
-    "speed":{"type":"integer"},
-    "v_speed":{"type":"integer"},
-    "flight_number":{"type":"keyword"},
-    "flight_iata":{"type":"keyword"},
-    "dep_iata":{"type":"keyword"},
-    "arr_iata":{"type":"keyword"},
-    "airline_iata":{"type":"keyword"},
-    "aircraft_icao": { "type": "keyword" },
-    "status": { "type": "keyword" },
-    "type": { "type": "keyword" },
-    "arr_pos":{"type":"geo_point"},
-    "dep_pos":{"type":"geo_point"},
-    "Departure":{"type":"keyword"},
-    "Arrival":{"type":"keyword"}}
+    "hex" : "152063",
+    "reg_number" : "RA-73827",
+    "flag" : "RU",
+    "alt" : 9880.0,
+    "dir" : 296.9,
+    "speed" : 780,
+    "v_speed" : 0,
+    "flight_number" : "106",
+    "flight_icao" : "SVR106",
+    "flight_iata" : "U6106",
+    "dep_icao" : "UIII",
+    "dep_iata" : "IKT",
+    "arr_icao" : "UUDD",
+    "arr_iata" : "DME",
+    "airline_icao" : "SVR",
+    "airline_iata" : "U6",
+    "aircraft_icao" : "A320",
+    "status" : "en-route",
+    "position" : {
+      "lat" : 57.49671,
+      "lon" : 86.35892
+    },
+    "type" : "Unknown",
+    "dep_pos" : {
+      "lat" : 52.26670075,
+      "lon" : 104.4000015
+    },
+    "arr_pos" : {
+      "lat" : 0.0,
+      "lon" : 0.0
+    },
+    "Departure" : "Irkutsk"
+  }
