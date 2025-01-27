@@ -307,9 +307,12 @@ The frontend service provides an intuitive and user-friendly web interface for t
     - Access the web application via `http://localhost:8080`.
 
 ## 🖥️ Results
+**Welcome Page**
 ![index-page](img/index.jpg)
+**Sign In / Sign Up**
 ![login-page](img/login.jpg)
 ![register-page](img/register.jpg)
+**Dashboard**
 ![dashboard-page](img/dashboard.jpg)
 
 Let us now focus on the graphs developed during the data visualization process. We have chosen to divide our dashboard into three sections: airport information, flight information, and aircraft information.
