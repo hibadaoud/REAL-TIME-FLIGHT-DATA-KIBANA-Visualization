@@ -108,6 +108,7 @@ Coordinates user actions and system workflows:
 To ensure seamless operation and management, our project is built upon a Dockerized environment, encapsulating each component of the system within its own container. This approach not only fosters a modular architecture, making it easier to update and maintain individual parts without affecting the whole system, but also enhances scalability and fault tolerance. 
 
 Each service in the system, operates in an isolated yet interconnected manner through a custom Docker network.
+
 ![Docker compose Services](./img/docker.jpg)
 
 ## 🔧 Setup and Usage
