@@ -25,24 +25,18 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
     - Business Logic Layer   
     - Process-Centric Layer
     - Visualization Layer
-
 - **Authentication & Authorization System**:
     - Implement JWT-based authentication, requiring a token to access specific API endpoints.
-
 - **Use of a Database Management System**
-
 - **Defined Data Structures**:
    - Inputs and outputs for services are JSON-based, with clear schema definitions provided for external and internal data exchanges.
-
 - **General Design Principles:**
     - **Modular** and **Scalable** services designed for reusability and easy scaling across different environments.  
     -  Services interact exclusively through **REST APIs** for standardized communication.  
     - **Internal and External Integration**: Incorporates external flight data API and internal data processing and visualization components.  
-
 - **Deployment**
     - Entire system is containerized using **Docker** for consistency, scalability, and portability.
     - Deployment ensures real-time data processing and visualization with seamless user interaction.
-
 
 ## 🗝️ Key Features
 
