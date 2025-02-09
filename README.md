@@ -82,6 +82,9 @@ The data flow starts with a **Kafka producer** that publishes flight data to the
 
 The **Kibana dashboard**, embedded directly within the web application, visualizes the processed data in real time, providing users with a seamless, interactive experience.
 
+![Application Architecture](./img/archi.png)
+
+
 #### **1. Data Layer**  
 Manages and stores persistent data:
 - **MongoDB**: Handles user authentication data (email, password, tokens).  
@@ -104,7 +107,8 @@ Coordinates user actions and system workflows:
 ## 🐳 Dockerized Environment
 To ensure seamless operation and management, our project is built upon a Dockerized environment, encapsulating each component of the system within its own container. This approach not only fosters a modular architecture, making it easier to update and maintain individual parts without affecting the whole system, but also enhances scalability and fault tolerance. 
 
-Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
+Each service in the system, operates in an isolated yet interconnected manner through a custom Docker network.
+![Docker compose Services](./img/docker.jpg)
 
 ## 🔧 Setup and Usage
 In order to see the web application with Real Time visualization Dashboard you just need to:
