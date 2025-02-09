@@ -4,7 +4,7 @@
 - [📌 Project Overview](#-project-overview)
 - [🔑 Key Objectives](#-key-objectives)
 - [🛠️ Technologies Used](#-technologies-used)
-- [🏛️ Architecture](#-architecture)
+- [🏛️ Brief Description & Architecture](#-architecture)
 - [🐳 Dockerized Environment](#-dockerized-environment)
 - [🔧 Setup and usage](#-setup-and-usage)
 - [⚙️ Services](#-services)
@@ -74,13 +74,13 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
 | HTML, CSS, JS         | Builds the web interface.                                                   |
 | Docker                | Manages services in isolated and consistent environments.                  |
 
-## 🏛️ Architecture
+## 🏛️ Brief Description & Architecture 
 
-The web application incorporates **JWT-based authentication** for secure user authorization, with user credentials securely stored in **MongoDB**. Upon successful login, a **Kibana dashboard** is displayed, presenting **real-time flight data** retrieved from the **Airlabs API**, which offers extensive information on air traffic and airport density.
+The web application features **JWT-based authentication** for secure user access, with credentials safely stored in **MongoDB**. After a successful login  and using **token authorization**, users are directed to a **Kibana dashboard** that displays **real-time flight data** from the **Airlabs API**, offering detailed information on air traffic and airport density.
 
-The data flow begins with a **Kafka producer**, which transmits the flight data to a topic named `flight`. For data processing, **Apache Spark** subscribes to the `flight` topic, retrieves the data, processes it, and sends the results to **Elasticsearch**, where it is stored in the `esflight` index. 
+The data flow starts with a **Kafka producer** that publishes flight data to the `flight` topic. **Apache Spark** subscribes to this topic, processes the data, and forwards the results to **Elasticsearch**, where they are stored in the `esflight` index.
 
-The **Kibana dashboard** is used to visualize the processed data in real time with precision. This dashboard is seamlessly embedded within the web application, providing users with a unified and interactive experience.
+The **Kibana dashboard**, embedded directly within the web application, visualizes the processed data in real time, providing users with a seamless, interactive experience.
 
 #### **1. Data Layer**  
 Manages and stores persistent data:
