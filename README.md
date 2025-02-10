@@ -4,7 +4,7 @@
 - [📌 Project Overview](#-project-overview)
 - [🔑 Key Objectives](#-key-objectives)
 - [🛠️ Technologies Used](#-technologies-used)
-- [🏛️ Architecture](#-architecture)
+- [🏛️ Brief Description & Architecture](#-architecture)
 - [🐳 Dockerized Environment](#-dockerized-environment)
 - [🔧 Setup and usage](#-setup-and-usage)
 - [⚙️ Services](#-services)
@@ -25,22 +25,18 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
     - Business Logic Layer   
     - Process-Centric Layer
     - Visualization Layer
-    - Authentication System
-
+- **Authentication & Authorization System**:
+    - Implement JWT-based authentication, requiring a token to access specific API endpoints.
+- **Use of a Database Management System**
+- **Defined Data Structures**:
+   - Inputs and outputs for services are JSON-based, with clear schema definitions provided for external and internal data exchanges.
 - **General Design Principles:**
     - **Modular** and **Scalable** services designed for reusability and easy scaling across different environments.  
     -  Services interact exclusively through **REST APIs** for standardized communication.  
     - **Internal and External Integration**: Incorporates external flight data API and internal data processing and visualization components.  
-
-- **Defined Data Structures**:
-   - Inputs and outputs for services are JSON-based, with clear schema definitions provided for external and internal data exchanges.
-
-- **Use of a Database Management System**
-
 - **Deployment**
     - Entire system is containerized using **Docker** for consistency, scalability, and portability.
     - Deployment ensures real-time data processing and visualization with seamless user interaction.
-
 
 ## 🗝️ Key Features
 
@@ -78,13 +74,16 @@ This project, developed by Hiba Daoud and Saad Raza as part of their academic jo
 | HTML, CSS, JS         | Builds the web interface.                                                   |
 | Docker                | Manages services in isolated and consistent environments.                  |
 
-## 🏛️ Architecture
+## 🏛️ Brief Description & Architecture 
 
-The web application incorporates **JWT-based authentication** for secure user authorization, with user credentials securely stored in **MongoDB**. Upon successful login, a **Kibana dashboard** is displayed, presenting **real-time flight data** retrieved from the **Airlabs API**, which offers extensive information on air traffic and airport density.
+The web application features **JWT-based authentication** for secure user access, with credentials safely stored in **MongoDB**. After a successful login  and using **token authorization**, users are directed to a **Kibana dashboard** that displays **real-time flight data** from the **Airlabs API**, offering detailed information on air traffic and airport density.
 
-The data flow begins with a **Kafka producer**, which transmits the flight data to a topic named `flight`. For data processing, **Apache Spark** subscribes to the `flight` topic, retrieves the data, processes it, and sends the results to **Elasticsearch**, where it is stored in the `esflight` index. 
+The data flow starts with a **Kafka producer** that publishes flight data to the `flight` topic. **Apache Spark** subscribes to this topic, processes the data, and forwards the results to **Elasticsearch**, where they are stored in the `esflight` index.
 
-The **Kibana dashboard** is used to visualize the processed data in real time with precision. This dashboard is seamlessly embedded within the web application, providing users with a unified and interactive experience.
+The **Kibana dashboard**, embedded directly within the web application, visualizes the processed data in real time, providing users with a seamless, interactive experience.
+
+![Application Architecture](./img/archi.png)
+
 
 #### **1. Data Layer**  
 Manages and stores persistent data:
@@ -108,7 +107,9 @@ Coordinates user actions and system workflows:
 ## 🐳 Dockerized Environment
 To ensure seamless operation and management, our project is built upon a Dockerized environment, encapsulating each component of the system within its own container. This approach not only fosters a modular architecture, making it easier to update and maintain individual parts without affecting the whole system, but also enhances scalability and fault tolerance. 
 
-Each service, from Kafka for real-time data ingestion to Kibana for insightful visualizations, operates in an isolated yet interconnected manner through a custom Docker network.
+Each service in the system, operates in an isolated yet interconnected manner through a custom Docker network.
+
+![Docker compose Services](./img/docker.jpg)
 
 ## 🔧 Setup and Usage
 In order to see the web application with Real Time visualization Dashboard you just need to:
@@ -188,6 +189,7 @@ In order to see the web application with Real Time visualization Dashboard you j
 
 ### Spark Service: 
 The Spark service processes real-time flight data retrieved from the Kafka topic, enriches it with additional information (e.g., airport names, flight types), and stores it in Elasticsearch for visualization in Kibana.
+**The Spark service communicates with Kafka and Elasticsearch services using internal APIs as they are all in the same network.**
 
 - **Services in `docker-compose.yml`**
     - **spark-master** : `hiba25/flight-dash:spark-master`
@@ -226,6 +228,8 @@ The Spark service processes real-time flight data retrieved from the Kafka topic
 
 ### Elasticsearch service:   
 Elasticsearch is responsible for storing and indexing the processed flight data to enable efficient querying and real-time visualization in Kibana. It depends on the Kafka service to retrieve processed data streams from the flights topic for indexing. This ensures persistent data storage, allowing historical data to remain accessible even when services are stopped or no new data is being ingested.
+**The Spark Elasticsearch communicates with Kafka and Kibana services using internal APIs as they are all in the same network.**
+
 - **Elasticsearch image**: Custom image `hiba25/flight-dash:elasticsearch` built with the necessary Elasticsearch setup from `elasticsearch/Dockerfile'.
 - `custom_startup.sh`: Automates Elasticsearch initialization, waits for readiness, and creates the `esflight` index using `create_index_elastic.py`
 -   `create_index_elastic.py`: Defines and creates the esflight index with necessary mappings in Elasticsearch.
@@ -243,6 +247,8 @@ Elasticsearch is responsible for storing and indexing the processed flight data 
 ### **Kibana Service**
 
 Kibana serves as the **real-time data visualization** layer in this project, connecting to Elasticsearch to fetch and display processed flight data. The data is displayed in custom dashboard with insightful graphs and maps. The dashboard is embedded into the web application using an `iframe`, providing users with an interactive and seamless visualization experience.
+**The Kibana service communicates with Elasticsearch and Frontend services using internal APIs as they are all in the same network.**
+
 - **Kibana image**: Custom image `hiba25/flight-dash:kibana` built with the necessary Kiabana setup from `kibana/Dockerfile'.
 - `custom_cmd.sh`:
    - Executes essential setup scripts and ensures Kibana runs smoothly.
@@ -264,7 +270,7 @@ Kibana serves as the **real-time data visualization** layer in this project, con
     - If not import `export.ndjson` manually.
 
 ###  Backend Service 
-The backend service is the core API for user authentication, data handling, and Kafka producer triggering. It connects with other services, such as MongoDB for storing user credentials and Kafka for data streaming, and provides RESTful endpoints for user interactions.
+The backend service is **the core API for user authentication, data handling, and Kafka producer triggering.** It connects with other services, such as MongoDB for storing user credentials and Kafka for data streaming, and provides RESTful endpoints for user interactions.
 - **Services Used**
     - **MongoDB** : `mongo:latest`
         - **Purpose**: Stores user authentication data (email, password, tokens).  
@@ -316,7 +322,9 @@ The backend service is the core API for user authentication, data handling, and 
        `<your-jwt-token>` is stored in `response.json`
 
 ### Frontend Service 
-The frontend service provides an intuitive and user-friendly web interface for the Real-Time Flight Visualization Dashboard. It enables users to interact with the application for tasks such as login, registration, and viewing real-time flight data via the embedded Kibana dashboard.
+The frontend service provides an intuitive and user-friendly web interface for the Real-Time Flight Visualization Dashboard. It enables users to interact with the application for tasks such as login, Fro, and viewing real-time flight data via the embedded Kibana dashboard.
+**The Frontend service communicates with Backend services using API_URL="http://localhost:3000"**
+
 - **Steps to Launch the Backend**
     - Start `docker-compose.yml`:
         ```bash
