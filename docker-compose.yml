@@ -1,0 +1,199 @@
+services:
+  zookeeper:
+    container_name: zookeeper-cntr
+    restart: always
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - flight_network
+
+  kafka:
+    container_name: kafka-cntr
+    restart: always
+    image: docker.io/bitnami/kafka:3.3
+    ports:
+      - "9093:9093"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+    depends_on:
+      - zookeeper
+    networks:
+      - flight_network
+
+  spark-master:
+    image: hiba25/flight-dash:spark-master
+    build:
+      context: ./ 
+      dockerfile: spark/Dockerfile
+    container_name: spark-master
+    command: bash -c "bin/spark-class org.apache.spark.deploy.master.Master & spark-submit --total-executor-cores 4 --executor-memory 2g --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.4,org.apache.kafka:kafka-clients:3.2.3,org.elasticsearch:elasticsearch-spark-30_2.12:8.8.2,commons-httpclient:commons-httpclient:3.1 spark_stream.py >out.txt"
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+    networks:
+      - flight_network
+
+  spark-worker-1:
+    image: hiba25/flight-dash:spark-worker-1
+    build:
+      context: .
+      dockerfile: spark/Dockerfile
+    container_name: spark-worker-1
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    ports:
+    - "8081:8081"   # Web UI for Spark Worker 
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 2g
+      SPARK_MASTER_URL: spark://spark-master:7077
+    networks:
+      - flight_network
+
+  elasticsearch:
+    image: hiba25/flight-dash:elasticsearch
+    container_name: elasticsearch-cntr
+    build:
+      context: .
+      dockerfile: elasticsearch/Dockerfile
+    environment:
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.ml.enabled=false
+      - cluster.name=kafka-cluster
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch_data:/bitnami/elasticsearch/data
+   
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    depends_on:
+      - kafka
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - flight_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    healthcheck:
+      test: curl -u elastic:elastic -s -f elasticsearch-cntr:9200/_cat/health >/dev/null || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kibana:
+    image: hiba25/flight-dash:kibana
+    container_name: kibana-cntr
+    build:
+      context: .
+      dockerfile: kibana/Dockerfile
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    stdin_open: true
+    tty: true
+    restart: always
+    networks:
+      - flight_network
+    links: ['elasticsearch']
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    healthcheck:
+      test: curl --fail http://kibana-cntr:5601 || exit 1
+      interval: 30s
+      retries: 3
+      timeout: 10s   
+
+  mongo:
+    container_name: mongo-cntr
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    networks: 
+      - flight_network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    image: hiba25/flight-dash:backend
+    container_name: backend-cntr
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_USER=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - API_URL=${API_URL}
+    depends_on:
+      - mongo
+      - kafka
+    networks: 
+      - flight_network
+
+  frontend:
+    image: hiba25/flight-dash:frontend
+    container_name: frontend-cntr
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - backend
+    networks: 
+      - flight_network
+
+networks:
+  flight_network:
+    driver: bridge
+
+volumes:
+  elasticsearch_data:
+    driver: local
+  kibana_data:
+    driver: local
+  mongo_data:
+    driver: local
