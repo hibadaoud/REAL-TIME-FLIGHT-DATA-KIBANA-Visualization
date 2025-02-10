@@ -55,7 +55,7 @@ if (document.getElementById("loginForm")) {
             if (data.token) {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("email", data.email || email); // Save username
-                window.location.href = "/dashboard";
+                window.location.href = "dashboard.html";
             } else {
                 loginMessage.style.color = "red";
                 loginMessage.textContent = data.error || "Login failed. Please try again.";            }
@@ -65,13 +65,12 @@ if (document.getElementById("loginForm")) {
     });
 }
 // Handle Dashboard
-console.log("Adding event listener for logout button"); // Debugging statement
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Adding event listener for logout button"); // Debugging statement
     if (document.getElementById("dashboardData")) {
         const token = localStorage.getItem("token");
+
         if (!token) {
-            console.log("no token")
+            console.log("No token");
             alert("You are not logged in. Please log in.");
             setTimeout(() => {
                 window.location.href = "login.html";
@@ -82,13 +81,12 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then((response) => {
                     if (response.status === 403) {
-                        console.log("token invalid")
+                        console.log("Token invalid");
                         alert("Your session has expired or the token is invalid. Please log in again.");
                         localStorage.removeItem("email");
                         localStorage.removeItem("token");
                         window.location.href = "login.html";
                         return;
-
                     } else {
                         return response.json();
                     }
@@ -104,13 +102,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     localStorage.removeItem("token");
                     window.location.href = "index.html";
                 });
-                document.getElementById("logoutButton").addEventListener("click", () => {
-                    console.log("Logout button clicked"); // Debugging statement
-                    localStorage.removeItem("email");
-                    localStorage.removeItem("token");
-                    console.log("Local storage after logout:", localStorage); // Debugging statement
-                    window.location.href = "index.html";
-                });
+
+            document.getElementById("logoutButton").addEventListener("click", () => {
+                console.log("Logout button clicked"); // Debugging statement
+                localStorage.removeItem("email");
+                localStorage.removeItem("token");
+                console.log("Local storage after logout:", localStorage); // Debugging statement
+                window.location.href = "index.html";
+            });
+
             document.getElementById('fetchDataButton').addEventListener('click', () => {
                 fetch(`${API_BASE}/start-producer`, {
                     method: 'POST',

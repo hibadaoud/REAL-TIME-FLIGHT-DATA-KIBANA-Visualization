@@ -13,25 +13,30 @@ producer = Producer({'bootstrap.servers': 'kafka:9092'})
 
 api_url = os.getenv('API_URL')
 
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"[ERROR] Message delivery failed: {err}")
+    else:
+        print(f"[INFO] Message delivered to {msg.topic()} [{msg.partition()}]") 
+
 # Fetch data from the API
+print("[INFO] Fetching data from API...")
 response = requests.get(api_url)
-print(response.status_code, response.text)  # Debug log
+print(f"[INFO] API responded with status: {response.status_code}")
 
 if response.status_code == 200:
-    # Parse the JSON response
-    data = response.json().get("response", [])  # Safely handle missing "response" key
-    # print(data)
-    
-    # Publish each object in the response to the Kafka topic
+    print(f"[INFO] Received {len(response.json().get('response', []))} items.")
+    data = response.json().get("response", [])
+
     for i, obj in enumerate(data):
         producer.produce('flights', key=str(obj.get('hex', '')), value=json.dumps(obj))
-        # producer.poll(0)
         if i == 0:
-            print("First message sent")  # Signal to Node.js
+            print("[INFO] First Kafka message sent")  # Signal to Node.js
         time.sleep(0.01)  # Small delay to prevent overwhelming Kafka
-    
-    # Ensure all messages are sent
+
     producer.flush()
+    print("[INFO] All messages sent successfully.")
 else:
-    print(f"Failed to fetch data from API (Status Code: {response.status_code})")
+    print(f"[ERROR] Failed to fetch data (Status Code: {response.status_code})")
+
         

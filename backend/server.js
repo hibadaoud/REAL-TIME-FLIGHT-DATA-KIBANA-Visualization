@@ -86,32 +86,10 @@ app.post('/login', async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign({ email: user.email }, SECRET_KEY);
+    res.json({ token, message: 'Login successful ' });
 
-    // Trigger the producer
-    const scriptPath = path.join(__dirname, 'producer_app.py');
-    const producer = spawn('python3', [scriptPath]);
-    let firstDataSent = false;
-    producer.stdout.on('data', (data) => {
-        console.log(`Producer stdout: ${data.toString()}`);
 
-        // Send response after first data is produced
-        if (!firstDataSent) {
-            firstDataSent = true;
-            res.json({ token, message: 'Login successful and producer started!' });
-        }
-    });
-
-    producer.stderr.on('data', (data) => {
-        console.error(`Producer stderr: ${data.toString()}`);
-    });
-
-    producer.on('close', (code) => {
-        if (code === 0) {
-            console.log('Producer completed successfully.');
-        } else {
-            console.error(`Producer exited with code ${code}`);
-        }
-    });
+    
 
 });
 
@@ -132,7 +110,27 @@ const authenticateToken = (req, res, next) => {
 
 // 4. Protected Endpoint
 app.get('/dashboard', authenticateToken, (req, res) => {
-    res.json({ message: 'Welcome to the dashboard!', user: req.user });
+    res.json({ message: 'Access granted! Producer is starting.' });
+
+    // Trigger the producer
+    const scriptPath = path.join(__dirname, 'producer_app.py');
+    const producer = spawn('python3', [scriptPath]);
+
+    producer.stdout.on('data', (data) => {
+        console.log(`Producer stdout: ${data.toString()}`);
+    });
+
+    producer.stderr.on('data', (data) => {
+        console.error(`Producer stderr: ${data.toString()}`);
+    });
+
+    producer.on('close', (code) => {
+        if (code === 0) {
+            console.log('Producer completed successfully.');
+        } else {
+            console.error(`Producer exited with code ${code}`);
+        }
+    });
 });
 
 // Route to trigger Kafka producer
