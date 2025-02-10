@@ -25,9 +25,10 @@ if response.status_code == 200:
     # Publish each object in the response to the Kafka topic
     for i, obj in enumerate(data):
         producer.produce('flights', key=str(obj.get('hex', '')), value=json.dumps(obj))
+        # producer.poll(0)
         if i == 0:
             print("First message sent")  # Signal to Node.js
-        time.sleep(0.05)  # Small delay to prevent overwhelming Kafka
+        time.sleep(0.01)  # Small delay to prevent overwhelming Kafka
     
     # Ensure all messages are sent
     producer.flush()

@@ -19,8 +19,9 @@ RUN apt-get update && apt-get install -y \
     python3 -m pip install requests confluent_kafka python-dotenv --break-system-packages
 
 # Copy the rest of the application files
-COPY backend .
 COPY kafka/producer_app.py .
+COPY backend .
+
 
 # Expose the port the app runs on
 EXPOSE 3000
