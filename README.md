@@ -104,6 +104,12 @@ Manages core functionality and processing:
 Coordinates user actions and system workflows:
 - **Node.js (Express)**: Provides REST APIs for login, registration, fetching real-time data, and triggering producer actions.
 
+#### **5. Vizualization Layer**  
+Presents real-time processed data to the end user through a user-friendly interface
+- **Kiabana**: Visualizes real-time flight data using an interactive dashboard.
+- **HTML, CSS, JS**: Builds the web interface for user authentication and embedding Kibana for real-time visualization.
+- **Nginx**: Serves the frontend and routes requests to the backend.
+
 ## 🐳 Dockerized Environment
 To ensure seamless operation and management, our project is built upon a Dockerized environment, encapsulating each component of the system within its own container. This approach not only fosters a modular architecture, making it easier to update and maintain individual parts without affecting the whole system, but also enhances scalability and fault tolerance. 
 
