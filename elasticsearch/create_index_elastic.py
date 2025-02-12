@@ -19,6 +19,7 @@ mapping = {
          "speed":{"type":"integer"},
          "v_speed":{"type":"integer"},
          "flight_number":{"type":"keyword"},
+         "flight_icao":{"type":"keyword"},
          "flight_iata":{"type":"keyword"},
          "dep_iata":{"type":"keyword"},
          "arr_iata":{"type":"keyword"},

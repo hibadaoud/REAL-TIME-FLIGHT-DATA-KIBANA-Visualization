@@ -124,17 +124,20 @@ dataframe = dataframe.selectExpr("CAST(value AS STRING)") \
     .withColumn("arr_pos", get_position_udf(col("arr_iata")))\
     .withColumn("Departure", get_name_udf(col("dep_iata")))\
     .withColumn("Arrival", get_name_udf(col("arr_iata")))
-    
+
+dataframe = dataframe.dropna(subset=["flight_icao"])
+dataframe = dataframe.dropDuplicates(["flight_icao"])  # Deduplicate based on flight_icao
 dataframe = dataframe.filter(~(col("position.lat").isNull() | col("position.lon").isNull() | col("position").isNull()))
 dataframe = dataframe.filter(~(col("dep_pos.lat").isNull() | col("dep_pos.lon").isNull() | col("dep_pos").isNull()))
 dataframe = dataframe.filter(~(col("arr_pos.lat").isNull() | col("arr_pos.lon").isNull() | col("arr_pos").isNull()))
+
 
 #----------------------------
 # WRITING INTO ELASTICSEARCH
 query = dataframe.writeStream \
     .format("org.elasticsearch.spark.sql") \
     .outputMode("update") \
-    .option("es.mapping.id", "reg_number") \
+    .option("es.mapping.id", "flight_icao") \
     .option("es.nodes", "elasticsearch") \
     .option("es.port", "9200") \
     .option("es.nodes.wan.only","true") \

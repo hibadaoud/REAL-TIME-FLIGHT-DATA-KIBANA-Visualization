@@ -135,21 +135,12 @@ app.get('/dashboard', authenticateToken, (req, res) => {
 
 // Route to trigger Kafka producer
 app.post('/start-producer', (req, res) => {
+    // Trigger the producer
     const scriptPath = path.join(__dirname, 'producer_app.py');
-
-    // Start the producer script
     const producer = spawn('python3', [scriptPath]);
-
-    let firstDataSent = false;
 
     producer.stdout.on('data', (data) => {
         console.log(`Producer stdout: ${data.toString()}`);
-
-        // Check for the first data success signal
-        if (!firstDataSent) {
-            firstDataSent = true; // Ensure this block runs only once
-            res.status(200).json({ message: 'Producer started successfully!' });
-        }
     });
 
     producer.stderr.on('data', (data) => {
@@ -157,13 +148,11 @@ app.post('/start-producer', (req, res) => {
     });
 
     producer.on('close', (code) => {
-        if (code !== 0) {
+        if (code === 0) {
+            console.log('Producer completed successfully.');
+        } else {
             console.error(`Producer exited with code ${code}`);
-            if (!firstDataSent) {
-                return res.status(500).json({ message: `Producer failed with code ${code}` });
-            }
         }
-        console.log('Producer process completed.');
     });
 });
 
