@@ -354,7 +354,7 @@ For this section of the dashboard, we focused on information useful for airport 
 ![Airport-information](img/Airport-Information.png)
 
 ### Flight Information
-For this part of the dashboard, we visualize on the map the position of aircraft, their departure and arrival airports sorted by their speeds or altitudes as needed. Then, on the left, we have for each type of aircraft, the types of routes it operates. We notice that the larger the aircraft, the more capable it is of performing long-haul flights. Similarly, we can see on the right side of the drawing, the most frequent flights by geographical region. This approach provides the most information possible about the nature of flights, their frequencies, and the type of aircraft that operates them.
+For this part of the dashboard, we visualize on the map the position of aircraft, their departure and arrival airports sorted by their speeds or altitudes as needed. Then the treemaps display the most frequent flights, grouped by aircraft type and country flag, highlighting key trends such as the dominance of aircraft models like B738 and countries like the US in air traffic operations.
 
 ![Flight-information](img/Flight-information.jpeg)
 
