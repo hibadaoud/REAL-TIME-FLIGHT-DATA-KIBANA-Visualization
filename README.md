@@ -87,7 +87,7 @@ The **Kibana dashboard**, embedded directly within the web application, visualiz
 
 #### **1. Data Layer**  
 Manages and stores persistent data:
-- **MongoDB**: Handles user authentication data (email, password, tokens).  
+- **MongoDB**: Handles user authentication data (email,password).  
 - **Elasticsearch**: Stores and queries processed real-time flight data visualized in Kibana.
 
 #### **2. Adapter Layer**  
