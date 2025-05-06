@@ -13,11 +13,13 @@ producer = Producer({'bootstrap.servers': 'kafka:9092'})
 
 api_url = os.getenv('API_URL')
 
+
 def delivery_report(err, msg):
     if err is not None:
         print(f"[ERROR] Message delivery failed: {err}")
     else:
-        print(f"[INFO] Message delivered to {msg.topic()} [{msg.partition()}]") 
+        print(f"[INFO] Message delivered to {msg.topic()} [{msg.partition()}]")
+
 
 # Fetch data from the API
 print("[INFO] Fetching data from API...")
@@ -38,5 +40,3 @@ if response.status_code == 200:
     print("[INFO] All messages sent successfully.")
 else:
     print(f"[ERROR] Failed to fetch data (Status Code: {response.status_code})")
-
-        

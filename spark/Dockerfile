@@ -16,8 +16,8 @@ RUN curl -LO https://downloads.lightbend.com/scala/2.12.15/scala-2.12.15.tgz && 
     mv /opt/scala-2.12.15 /opt/scala
 
 # Set up environment variables for Scala
-ENV SCALA_HOME /opt/scala
-ENV PATH $PATH:$SCALA_HOME/bin
+ENV SCALA_HOME=/opt/scala
+ENV PATH=$PATH:$SCALA_HOME/bin
 
 # Create the checkpoints directories and ensure the non-root user has write access
 RUN mkdir -p /opt/bitnami/spark/checkpoints/flights && \

@@ -4,7 +4,7 @@ import json
 
 # Kafka Consumer Configuration
 consumer = Consumer({
-    'bootstrap.servers': 'localhost:9093' ,
+    'bootstrap.servers': 'localhost:9093',
     'group.id': 'my-group',                # Consumer group ID
     'auto.offset.reset': 'earliest'        # Start reading from the earliest message
 })

@@ -1,3 +1,4 @@
+---
 services:
   zookeeper:
     container_name: zookeeper-cntr
@@ -56,7 +57,7 @@ services:
     depends_on:
       - spark-master
     ports:
-    - "8081:8081"   # Web UI for Spark Worker 
+      - "8081:8081"   # Web UI for Spark Worker 
     environment:
       SPARK_MODE: worker
       SPARK_WORKER_CORES: 2
@@ -168,7 +169,7 @@ services:
     depends_on:
       - mongo
       - kafka
-    networks: 
+    networks:
       - flight_network
 
   frontend:
@@ -196,4 +197,4 @@ volumes:
   kibana_data:
     driver: local
   mongo_data:
-    driver: local
+    driver: local  
