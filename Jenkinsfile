@@ -6,7 +6,12 @@ pipeline {
 
     }
     stages {
-
+         stage('Debug Path') {
+            steps {
+                sh 'pwd'
+                sh 'ls -la'
+            }
+        }
         stage('Build Docker Image')
         {
             steps
