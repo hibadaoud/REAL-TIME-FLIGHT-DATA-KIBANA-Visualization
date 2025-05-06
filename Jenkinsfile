@@ -3,7 +3,6 @@ pipeline {
     environment {
         IMAGE_NAME = 'hiba25/jenkins-flight-app'
         IMAGE_TAG = "${IMAGE_NAME}:${env.BUILD_NUMBER}"
-        // KUBECONFIG = credentials('kubeconfig-credentials-id')
 
     }
     stages {
