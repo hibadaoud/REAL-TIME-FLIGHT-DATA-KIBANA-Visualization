@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        IMAGE_NAME = 'hiba25/jenkins-flight-app'
+        IMAGE_NAME = 'hiba25/jenkins-flight-plateform'
         IMAGE_TAG = "${IMAGE_NAME}:${env.BUILD_NUMBER}"
 
     }
