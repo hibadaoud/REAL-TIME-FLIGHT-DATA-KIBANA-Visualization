@@ -17,7 +17,7 @@ pipeline {
             steps
             {   
                 sh 'docker build -t ${IMAGE_TAG} -f frontend/Dockerfile .'
-                echo "Docker image build successfully"
+                echo "Docker image build successfullyy"
                 sh "docker images"
             }
         }
