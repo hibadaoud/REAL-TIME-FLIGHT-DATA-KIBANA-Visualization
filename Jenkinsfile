@@ -27,7 +27,7 @@ pipeline {
                     echo "Debugging the pipeline"
                     sh 'echo "Debugging the pipeline"'
                     sh 'ls -la'
-                    sh 'pwd'
+                    sh 'cat Dockerfile'
                 }
             }
         }
