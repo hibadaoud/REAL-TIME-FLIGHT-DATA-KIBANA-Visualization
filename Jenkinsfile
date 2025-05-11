@@ -15,6 +15,17 @@ pipeline {
                     checkout scm
                 }
             }
+        }
+        stage('Debug') {
+            steps {
+                script {
+                    echo "Debugging the pipeline"
+                    sh 'echo "Debugging the pipeline"'
+                    sh 'ls -la'
+                    sh 'pwd'
+                }
+            }
+        }
         // stage('Lint') {
         //     agent {
         //         dockerfile {
@@ -76,5 +87,4 @@ pipeline {
         //     }
         // }
         
-    }
 }
