@@ -27,7 +27,7 @@ pipeline {
                     echo "Debugging the pipeline"
                     sh 'echo "Debugging the pipeline"'
                     sh 'ls -la'
-                    sh 'cat Dockerfile'
+                    sh 'cat frontend/dashboard.html
                 }
             }
         }
