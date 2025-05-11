@@ -27,7 +27,7 @@ pipeline {
                     echo "Debugging the pipeline"
                     sh 'echo "Debugging the pipeline"'
                     sh 'ls -la'
-                    sh 'cat frontend/dashboard.html
+                    sh 'cat frontend/dashboard.html'
                 }
             }
         }
