@@ -11,7 +11,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                cache(workspace: true, paths: ['.']) {
+                cache(caches: [
+                    [$class: 'ArbitraryFileCache',
+                     path: '.',
+                     includes: '**/*',
+                     compressionMethod: 'TAR']
+                ]) {
                     checkout scm
                 }
             }
