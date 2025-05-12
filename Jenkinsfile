@@ -21,75 +21,84 @@ pipeline {
                 }
             }
         }
-        stage('Debug') {
-            steps {
-                script {
-                    echo "Debugging the pipeline"
-                    sh 'echo "Debugging the pipeline"'
-                    sh 'ls -la'
-                    sh 'cat frontend/dashboard.html'
+        stage('Lint') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile'
+                    dir 'lint'
+                    reuseNode true
+                    // customWorkspace '/home/jenkins/workspace/frontend'
+                }
+            }
+            parallel {
+                stage('ESLint') {
+                    steps {
+                        script {
+                            // Running ESLint and storing the output in a file
+                            sh '''
+                            mkdir -p lint-results
+                            eslint backend/**/*.js > lint-results/eslint.txt || true
+                            '''
+                            // Archiving the ESLint results
+                            archiveArtifacts artifacts: 'lint-results/eslint.txt', allowEmptyArchive: true
+                            // sh 'cp lint-results/*.txt /path/to/container/artifacts/'
+
+                        }
+                    }
+                }
+
+                stage('HTMLHint') {
+                    steps {
+                        script {
+                            // Running HTMLHint and storing the output in a file
+                            sh '''
+                            mkdir -p lint-results
+                            htmlhint frontend/**/*.html > lint-results/htmlhint.txt || true
+                            '''
+                            // Archiving the HTMLHint results
+                            archiveArtifacts artifacts: 'lint-results/htmlhint.txt', allowEmptyArchive: true
+                        }
+                    }
+                }
+
+                stage('Flake8') {
+                    steps {
+                        script {
+                            // Running Flake8 and storing the output in a file
+                            sh '''
+                            mkdir -p lint-results
+                            flake8 spark/*.py > lint-results/flake8.txt || true
+                            '''
+                            // Archiving the Flake8 results
+                            archiveArtifacts artifacts: 'lint-results/flake8.txt', allowEmptyArchive: true
+                        }
+                    }
+                }
+
+                stage('Hadolint') {
+                    steps {
+                        script {
+                            // Running Hadolint on the Dockerfile and storing the output in a file
+                            sh '''
+                            mkdir -p lint-results
+                            hadolint backend/Dockerfile > lint-results/hadolint.txt || true
+                            '''
+                            // Archiving the Hadolint results
+                            archiveArtifacts artifacts: 'lint-results/hadolint.txt', allowEmptyArchive: true
+                        }
+                    }
                 }
             }
         }
-        // stage('Lint') {
-        //     agent {
-        //         dockerfile {
-        //             filename 'lint/Dockerfile' // This is your custom Dockerfile
-        //         }
-        //     }
-        //     parallel {
-        //         stage('ESLint') {
-        //         steps {
-        //             sh '''
-        //             mkdir -p lint-results
-        //             eslint backend/**/*.js > lint-results/eslint.txt || true
-        //             '''
-        //             archiveArtifacts artifacts: 'lint-results/eslint.txt', allowEmptyArchive: true
-        //         }
-        //         }
 
-        //         stage('HTMLHint') {
-        //         steps {
-        //             sh '''
-        //             mkdir -p lint-results
-        //             htmlhint frontend/**/*.html > lint-results/htmlhint.txt || true
-        //             '''
-        //             archiveArtifacts artifacts: 'lint-results/htmlhint.txt', allowEmptyArchive: true
-        //         }
-        //         }
-
-        //         stage('Flake8') {
-        //         steps {
-        //             sh '''
-        //             mkdir -p lint-results
-        //             flake8 spark/ > lint-results/flake8.txt || true
-        //             '''
-        //             archiveArtifacts artifacts: 'lint-results/flake8.txt', allowEmptyArchive: true
-        //         }
-        //         }
-
-        //         stage('Hadolint') {
-        //         steps {
-        //             sh '''
-        //             mkdir -p lint-results
-        //             hadolint backend/Dockerfile > lint-results/hadolint.txt || true
-        //             '''
-        //             archiveArtifacts artifacts: 'lint-results/hadolint.txt', allowEmptyArchive: true
-        //         }
-        //         }
-        //     }
-        // }
-    }
-
-         
-        // stage('Build Docker Image')
-        // {
-        //     steps
-        //     {   
+        // stage('Build Docker Image') {
+        //     steps {
+        //         // Building the Docker image using the specified Dockerfile
         //         sh 'docker build -t ${IMAGE_TAG} -f frontend/Dockerfile .'
-        //         echo "Docker image build successfullyyy"
+        //         echo "Docker image built successfully"
+        //         // Listing the Docker images to verify
         //         sh "docker images"
         //     }
         // }
-        
+    }        
 }
