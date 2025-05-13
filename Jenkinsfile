@@ -27,7 +27,7 @@ pipeline {
                     agent {
                         dockerfile {
                             filename 'lint/Dockerfile.ESlint'
-                            buildContext '.'
+                            dir '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -54,7 +54,7 @@ pipeline {
                     agent {
                         dockerfile {
                             filename 'lint/Dockerfile.htmllint'
-                            buildContext '.'
+                            dir '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -78,7 +78,7 @@ pipeline {
                     agent {
                         dockerfile {
                             filename 'lint/Dockerfile.flakelint'
-                            buildContext '.'
+                            dir '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -102,7 +102,7 @@ pipeline {
                     agent {
                         dockerfile {
                             filename 'lint/Dockerfile.hadolint'
-                            buildContext '.'
+                            dir '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
