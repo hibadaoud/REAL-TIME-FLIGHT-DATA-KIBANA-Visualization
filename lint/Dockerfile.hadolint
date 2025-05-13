@@ -2,12 +2,13 @@ FROM node:18
 
 USER root
 
+WORKDIR /app
+
 # Install Python and flake8
 RUN apt-get update && \
-    apt-get install -y python3-pip curl && \
-    pip3 install flake8 && \
-    npm install -g eslint htmlhint && \
+    apt-get install -y curl && \
     curl -sSL https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
-    chmod +x /usr/local/bin/hadolint
+    chmod +x /usr/local/bin/hadolint  && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+COPY ../ .
