@@ -26,8 +26,8 @@ pipeline {
                 stage('ESLint') {
                     agent {
                         dockerfile {
-                            filename 'Dockerfile.ESlint'
-                            dir 'lint'
+                            filename 'lint/Dockerfile.ESlint'
+                            buildContext '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -42,8 +42,8 @@ pipeline {
 
                             '''
                             // Archiving the ESLint results
-                            archiveArtifacts artifacts: '$WORKSPACE/lint-results/eslint.txt', allowEmptyArchive: true
-                            archiveArtifacts artifacts: '$WORKSPACE/lint-results/eslint-css.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'lint-results/eslint.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'lint-results/eslint-css.txt', allowEmptyArchive: true
                             // sh 'cp lint-results/*.txt /path/to/container/artifacts/'
 
                         }
@@ -53,8 +53,8 @@ pipeline {
                 stage('HTMLHint') {
                     agent {
                         dockerfile {
-                            filename 'Dockerfile.htmllint'
-                            dir 'lint'
+                            filename 'lint/Dockerfile.htmllint'
+                            buildContext '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -67,7 +67,7 @@ pipeline {
                             htmlhint ./**/*.html > $WORKSPACE/lint-results/htmllint.txt || true
                             '''
                             // Archiving the ESLint results
-                            archiveArtifacts artifacts: '$WORKSPACE/lint-results/htmllint.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'lint-results/htmllint.txt', allowEmptyArchive: true
                             // sh 'cp lint-results/*.txt /path/to/container/artifacts/'
 
                         }
@@ -77,8 +77,8 @@ pipeline {
                 stage('Flake8') {
                     agent {
                         dockerfile {
-                            filename 'Dockerfile.flakelint'
-                            dir 'lint'
+                            filename 'lint/Dockerfile.flakelint'
+                            buildContext '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -91,7 +91,7 @@ pipeline {
                             flake8 ./**/*.py > $WORKSPACE/lint-results/flakelint.txt || true
                             '''
                             // Archiving the ESLint results
-                            archiveArtifacts artifacts: '$WORKSPACE/lint-results/flakelint.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'lint-results/flakelint.txt', allowEmptyArchive: true
                             // sh 'cp lint-results/*.txt /path/to/container/artifacts/'
 
                         }
@@ -101,8 +101,8 @@ pipeline {
                 stage('Hadolint') {
                     agent {
                         dockerfile {
-                            filename 'Dockerfile.hadolint'
-                            dir 'lint'
+                            filename 'lint/Dockerfile.hadolint'
+                            buildContext '.'
                             reuseNode true
                             // customWorkspace '/home/jenkins/workspace/frontend'
                         }
@@ -113,9 +113,9 @@ pipeline {
                             sh '''
                             mkdir -p $WORKSPACE/lint-results
                             hadolint ./frontend/Dockerfile > $WORKSPACE/lint-results/hadolint.txt || true
-                            '''
+                            ''' 
                             // Archiving the ESLint results
-                            archiveArtifacts artifacts: '$WORKSPACE/lint-results/hadolint.txt', allowEmptyArchive: true
+                            archiveArtifacts artifacts: 'lint-results/hadolint.txt', allowEmptyArchive: true
                             // sh 'cp lint-results/*.txt /path/to/container/artifacts/'
 
                         }
