@@ -11,4 +11,5 @@ RUN apt-get update && \
     chmod +x /usr/local/bin/hadolint  && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY ../ .
+COPY . .
+

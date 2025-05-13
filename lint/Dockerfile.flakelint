@@ -5,7 +5,7 @@ WORKDIR /app
 # Install flake8
 RUN pip install flake8
 
-COPY ../spark/spark_stream.py .
+COPY ./spark/spark_stream.py .
 
 
 
