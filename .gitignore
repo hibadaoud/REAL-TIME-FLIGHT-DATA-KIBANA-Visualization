@@ -8,9 +8,5 @@ backend/response.json
 .env
 .vscode
 kafka/.env
-web
 kafka/.env
-Dockerfile
-docker-compose.yml
-Jenkinsfile
-lint
+
